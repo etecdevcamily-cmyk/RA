@@ -3,505 +3,662 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Norisk Razor VR - Holograma 360°</title>
+  <title>AERO-X // Holographic AR Helmet</title>
+
+  <!-- Biblioteca Three.js 3D para renderização procedural -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      user-select: none;
+    }
+
+    :root {
+      --cyan: #00f0ff;
+      --pink: #ff007f;
+      --purple: #8b00ff;
+      --dark: #05050c;
     }
 
     body {
       min-height: 100vh;
-      background: #05040a;
-      background-image: 
-        linear-gradient(rgba(123, 44, 191, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
-      background-size: 32px 32px;
+      background: radial-gradient(circle at 50% 50%, #0d091f 0%, #05050c 70%, #000002 100%);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      color: #fff;
-      overflow: hidden;
+      overflow-x: hidden;
       padding: 20px;
     }
 
-    /* Moldura externa com feixe giratório neon */
-    .moldura-cyber {
+    /* Grid de fundo estilo Cyberpunk */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 127, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Moldura externa com borda animada cônica */
+    .viewport-frame {
       position: relative;
       width: 100%;
-      max-width: 1240px;
-      height: min(92vh, 760px);
-      border-radius: 28px;
+      max-width: 1100px;
+      min-height: 620px;
+      border-radius: 24px;
       padding: 3px;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 0 45px rgba(123, 44, 191, 0.4), 0 0 95px rgba(0, 210, 255, 0.25);
+      background: conic-gradient(from var(--angle, 0deg), var(--cyan), var(--purple), var(--pink), var(--cyan));
+      animation: rotateBorder 6s linear infinite;
+      box-shadow: 0 0 50px rgba(139, 0, 255, 0.25), 0 0 100px rgba(0, 240, 255, 0.15);
+      z-index: 1;
     }
 
-    .moldura-cyber::before {
-      content: '';
-      position: absolute;
-      width: 250%;
-      height: 250%;
-      background: conic-gradient(
-        transparent,
-        #f72585 15%,
-        transparent 35%,
-        #7b2cbf 50%,
-        transparent 65%,
-        #00d2ff 80%,
-        transparent 100%
-      );
-      animation: girarBorda 6s linear infinite;
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
     }
 
-    .moldura-cyber::after {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      border-radius: 26px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      pointer-events: none;
-      z-index: 5;
+    @keyframes rotateBorder {
+      to { --angle: 360deg; }
     }
 
-    @keyframes girarBorda {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .viewport {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 35% 50%, #120924 0%, #05040a 82%);
-      border-radius: 25px;
-      display: flex;
-      align-items: center;
-      padding: 40px 60px;
-      overflow: hidden;
-    }
-
+    /* Contêiner principal interno */
     .stage {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: relative;
       width: 100%;
-      height: 100%;
-      position: relative;
-      gap: 30px;
-    }
-
-    /* PALCO 3D DO HOLOGRAMA */
-    .viewer-holograma-container {
-      position: relative;
-      width: 460px;
-      height: 460px;
-      flex-shrink: 0;
+      min-height: 614px;
+      background: rgba(10, 8, 20, 0.92);
+      border-radius: 22px;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      align-items: center;
-      perspective: 1200px;
-      user-select: none;
+      backdrop-filter: blur(12px);
     }
 
-    .dica-drag {
+    /* Barra de status superior do HUD */
+    .hud-bar {
       position: absolute;
-      top: 6px;
-      font-size: 0.8rem;
-      color: #00d2ff;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 700;
+      top: 20px;
+      left: 28px;
+      right: 28px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      pointer-events: none;
-      text-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
       z-index: 10;
     }
 
-    /* Base holográfica inferior com anel LiDAR */
-    .hologram-base-lidar {
-      position: absolute;
-      bottom: 25px;
-      width: 320px;
-      height: 80px;
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .badge-live::before {
+      content: '';
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      border: 2px dashed rgba(0, 210, 255, 0.6);
-      box-shadow: 0 0 35px rgba(0, 210, 255, 0.4), inset 0 0 25px rgba(247, 37, 133, 0.4);
-      transform: rotateX(75deg);
-      pointer-events: none;
-      animation: girarBase 12s linear infinite;
+      background: var(--pink);
+      box-shadow: 0 0 10px var(--pink);
+      animation: pulse 1.4s infinite ease-in-out;
     }
 
-    @keyframes girarBase {
-      0% { transform: rotateX(75deg) rotate(0deg); }
-      100% { transform: rotateX(75deg) rotate(360deg); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    /* Card giratório 3D */
-    .card-3d-holograma {
+    /* Layout principal: visor 3D à esquerda e texto à direita */
+    .layout-wrapper {
       position: relative;
-      width: 380px;
-      height: 380px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 30px;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Área do Canvas 3D */
+    .canvas-container {
+      position: relative;
+      width: 480px;
+      height: 480px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: grab;
-      transform-style: preserve-3d;
-      transition: transform 0.08s ease-out;
+      transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5;
     }
 
-    .card-3d-holograma:active {
+    .canvas-container:active {
       cursor: grabbing;
     }
 
-    /* Container com efeitos de cores e luz neon */
-    .holograma-render-box {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+      outline: none;
+    }
+
+    /* Indicador HUD de 360° sobre o capacete */
+    .rotate-hint {
+      position: absolute;
+      bottom: 24px;
+      display: inline-flex;
       align-items: center;
-      overflow: hidden;
-      border-radius: 20px;
-    }
-
-    /* Imagem base com blend neon */
-    .holograma-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      filter: contrast(1.25) brightness(1.15) drop-shadow(0 0 30px rgba(0, 210, 255, 0.6)) drop-shadow(0 0 50px rgba(247, 37, 133, 0.4));
-    }
-
-    /* Camada gradiente que tinge os circuitos em Roxo, Azul e Rosa */
-    .holograma-color-tint {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, 
-        rgba(247, 37, 133, 0.7) 0%, 
-        rgba(123, 44, 191, 0.65) 45%, 
-        rgba(0, 210, 255, 0.8) 100%
-      );
-      mix-blend-mode: color;
-      pointer-events: none;
-    }
-
-    /* Segunda camada de iluminação com feixe pulsante */
-    .holograma-glow-layer {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(0, 210, 255, 0.25) 0%, rgba(247, 37, 133, 0.2) 60%, transparent 80%);
-      mix-blend-mode: screen;
-      pointer-events: none;
-      animation: pulsarHolo 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulsarHolo {
-      0% { opacity: 0.6; filter: hue-rotate(0deg); }
-      100% { opacity: 1; filter: hue-rotate(25deg); }
-    }
-
-    /* Linhas de varredura holográfica (Scanlines) */
-    .scanlines-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 210, 255, 0.2) 50%);
-      background-size: 100% 4px;
-      pointer-events: none;
-      opacity: 0.35;
-    }
-
-    /* HUD de Controles */
-    .hud-controles {
-      position: absolute;
-      bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 10;
-    }
-
-    .badge-status {
+      gap: 10px;
+      background: rgba(13, 9, 31, 0.75);
+      border: 1px solid rgba(0, 240, 255, 0.4);
       padding: 6px 14px;
-      background: rgba(18, 14, 34, 0.85);
-      border: 1px solid rgba(0, 210, 255, 0.45);
-      border-radius: 20px;
+      border-radius: 30px;
       font-size: 0.78rem;
-      font-weight: 700;
-      color: #00d2ff;
-      letter-spacing: 1px;
-      box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
+      letter-spacing: 1.5px;
+      color: var(--cyan);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+      pointer-events: none;
     }
 
-    .btn-auto-rotate {
-      padding: 6px 14px;
-      background: rgba(247, 37, 133, 0.2);
-      border: 1px solid #f72585;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: 0 0 12px rgba(247, 37, 133, 0.3);
+    .rotate-hint svg {
+      animation: spinIcon 3s linear infinite;
     }
 
-    .btn-auto-rotate:hover {
-      background: #f72585;
-      box-shadow: 0 0 20px rgba(247, 37, 133, 0.8);
+    @keyframes spinIcon {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    /* PAINEL DE TEXTO LATERAL */
-    .painel-texto {
-      max-width: 500px;
-      z-index: 2;
+    /* Painel que desliza de trás do capacete para a lateral direita */
+    .info-panel {
+      position: absolute;
+      right: 50px;
+      width: 420px;
+      opacity: 0;
+      transform: translateX(-50px) scale(0.95);
+      pointer-events: none;
+      transition: all 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 6;
     }
 
-    .tag-edicao {
+    /* Ativação após a montagem do capacete */
+    .stage.ready .canvas-container {
+      transform: translateX(-220px);
+    }
+
+    .stage.ready .info-panel {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .tag-serie {
       display: inline-block;
-      padding: 6px 16px;
-      background: rgba(247, 37, 133, 0.15);
-      border: 1px solid #f72585;
-      color: #f72585;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 5px 12px;
+      background: rgba(255, 0, 127, 0.15);
+      border: 1px solid var(--pink);
+      color: #ff77b7;
       border-radius: 6px;
-      margin-bottom: 14px;
-      box-shadow: 0 0 15px rgba(247, 37, 133, 0.35);
+      margin-bottom: 12px;
     }
 
-    h1 {
-      font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+    .info-panel h1 {
+      font-size: 2.2rem;
       font-weight: 900;
-      letter-spacing: -0.5px;
       line-height: 1.1;
-      margin-bottom: 18px;
-      background: linear-gradient(90deg, #ffffff 30%, #f72585 70%, #00d2ff 100%);
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 20%, var(--cyan) 60%, var(--pink) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
     }
 
-    .subtitulo {
-      color: #d1d5db;
-      font-size: 1.05rem;
+    .info-panel p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .specs-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 34px;
+      margin-bottom: 26px;
     }
 
     .spec-item {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(123, 44, 191, 0.35);
-      padding: 12px;
-      border-radius: 12px;
-      text-align: center;
+      background: rgba(139, 0, 255, 0.08);
+      border: 1px solid rgba(139, 0, 255, 0.25);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .spec-item strong {
-      display: block;
-      color: #00d2ff;
-      font-size: 1.1rem;
-      margin-bottom: 2px;
+    .spec-item span:first-child {
+      font-size: 0.7rem;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
-    .spec-item span {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      letter-spacing: 0.5px;
+    .spec-item span:last-child {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
     }
 
-    .btn-explorar {
+    /* Botão de ação neon */
+    .btn-action {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
-      padding: 16px 38px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #f72585 0%, #7b2cbf 50%, #00d2ff 100%);
-      color: #ffffff;
-      text-decoration: none;
+      width: 100%;
+      padding: 15px 28px;
+      background: linear-gradient(90deg, #7928ca 0%, #ff0080 50%, #0070f3 100%);
+      background-size: 200% auto;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
       font-size: 1rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      box-shadow: 0 8px 30px rgba(247, 37, 133, 0.45);
-      border: none;
+      text-decoration: none;
       cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 0, 128, 0.45);
       transition: all 0.3s ease;
     }
 
-    .btn-explorar:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 14px 45px rgba(0, 210, 255, 0.65);
+    .btn-action:hover {
+      background-position: right center;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.7);
+      transform: translateY(-2px);
+    }
+
+    .btn-action svg {
+      transition: transform 0.3s;
+    }
+
+    .btn-action:hover svg {
+      transform: translateX(5px);
+    }
+
+    /* Responsividade */
+    @media (max-width: 960px) {
+      .stage.ready .canvas-container {
+        transform: translateY(-130px) scale(0.85);
+      }
+      .info-panel {
+        right: auto;
+        bottom: 30px;
+        width: 90%;
+        transform: translateY(40px);
+      }
+      .stage.ready .info-panel {
+        transform: translateY(0);
+      }
+      .info-panel h1 {
+        font-size: 1.6rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="moldura-cyber">
-    <div class="viewport">
-      <div class="stage">
+  <div class="viewport-frame">
+    <div class="stage" id="stage">
+      
+      <!-- HUD Superior -->
+      <div class="hud-bar">
+        <span class="badge-live">Holograma Ativo // 360° Real</span>
+        <span id="angleValue">AZIMUTE: 0°</span>
+        <span>MODO: FULL-FACE AR</span>
+      </div>
 
-        <!-- SIMULADOR 360° DO HOLOGRAMA -->
-        <div class="viewer-holograma-container" id="viewerContainer">
-          <span class="dica-drag">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16l-4-4 4-4M17 8l4 4-4 4M3 12h18"/></svg>
-            Holograma 3D // Arraste em 360°
-          </span>
-
-          <div class="hologram-base-lidar"></div>
-
-          <div class="card-3d-holograma" id="capaceteCard">
-            <div class="holograma-render-box">
-              <!-- Imagem do capacete holográfico com fallback seguro -->
-              <img 
-                id="fotoHolograma"
-                class="holograma-img"
-                src="holograma.jpg"
-                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80';"
-                alt="Holograma de Capacete AR 360"
-              />
-              <!-- Camadas que convertem a cor para Roxo, Rosa e Azul Ciano -->
-              <div class="holograma-color-tint"></div>
-              <div class="holograma-glow-layer"></div>
-              <div class="scanlines-overlay"></div>
-            </div>
-          </div>
-
-          <div class="hud-controles">
-            <span class="badge-status" id="badgeAngulo">ÂNGULO: 0°</span>
-            <button class="btn-auto-rotate" id="btnAutoRotate" onclick="alternarAutoRotate()">Giro: ON</button>
+      <!-- Área de Visualização 3D e Conteúdo -->
+      <div class="layout-wrapper">
+        
+        <div class="canvas-container" id="canvasBox" title="Arraste para girar em 360°">
+          <canvas id="helmetCanvas"></canvas>
+          <div class="rotate-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            ARRASTE PARA GIRAR 360°
           </div>
         </div>
 
-        <!-- PAINEL DE TEXTO LATERAL -->
-        <div class="painel-texto">
-          <span class="tag-edicao">Holograma AR Interativo</span>
-          <h1>Norisk Razor VR Camo</h1>
-          <p class="subtitulo">
-            Projeção volumétrica com malha de circuitos integrados, visor óptico com HUD de telemetria e blindagem balística. Interaja com o modelo 360° em tempo real para inspecionar cada ângulo.
+        <!-- Painel de Especificações que desliza da lateral -->
+        <div class="info-panel" id="infoPanel">
+          <span class="tag-serie">NEURAL MOTORCYCLE SYSTEM</span>
+          <h1>CAPACETE AR // MK-IV</h1>
+          <p>
+            Projetado com aerodinâmica pura de competição e estrutura integral.
+            Equipado com display HUD holográfico, visão noturna LiDAR integrada
+            e navegação em tempo real projetada diretamente na viseira.
           </p>
 
           <div class="specs-grid">
             <div class="spec-item">
-              <strong>120 FPS</strong>
-              <span>Visor Holográfico</span>
+              <span>Construção</span>
+              <span>Fibra de Carbono & Polímero</span>
             </div>
             <div class="spec-item">
-              <strong>360° LiDAR</strong>
-              <span>Varredura Espacial</span>
+              <span>Interface</span>
+              <span>AR HUD Panorâmico</span>
             </div>
             <div class="spec-item">
-              <strong>1.380g</strong>
-              <span>Casco Ultraleve</span>
+              <span>Sensores</span>
+              <span>LiDAR 360° + Telemetria</span>
+            </div>
+            <div class="spec-item">
+              <span>Conexão</span>
+              <span>Ultra-Low Latency 5.8G</span>
             </div>
           </div>
 
-          <a href="modelos.html" class="btn-explorar">
-            <span>Ver Modelos da Atualidade</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <!-- Botão para a próxima página -->
+          <a href="modelos.html" class="btn-action">
+            Acessar Modelos & Lentes
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </a>
         </div>
 
       </div>
+
     </div>
   </div>
 
   <script>
-    const container = document.getElementById('viewerContainer');
-    const card = document.getElementById('capaceteCard');
-    const badge = document.getElementById('badgeAngulo');
-    const btnAuto = document.getElementById('btnAutoRotate');
+    /* ========================================================
+       CONSTRUÇÃO DO HOLOGRAMA PROCEDURAL 3D DE CAPACETE DE MOTO
+       (Sem imagens externas: 100% Three.js nativo em Wireframe Neon)
+       ======================================================== */
 
-    let arrastando = false;
-    let inicioX = 0;
-    let inicioY = 0;
-    let anguloAtualX = 0;
-    let anguloAtualY = 0;
-    let autoRotate = true;
-    let animFrameId = null;
+    const canvas = document.getElementById('helmetCanvas');
+    const container = document.getElementById('canvasBox');
+    const angleDisplay = document.getElementById('angleValue');
+    const stage = document.getElementById('stage');
 
-    function atualizarTransform() {
-      let anguloNormalizado = Math.round(((anguloAtualY % 360) + 360) % 360);
-      badge.textContent = `ÂNGULO: ${anguloNormalizado}°`;
-      card.style.transform = `rotateY(${anguloAtualY}deg) rotateX(${-anguloAtualX}deg)`;
-    }
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 0.4, 5.2);
 
-    function loopAutoRotate() {
-      if (autoRotate && !arrastando) {
-        anguloAtualY += 0.6;
-        atualizarTransform();
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      antialias: true
+    });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Grupo principal do Capacete
+    const helmetGroup = new THREE.Group();
+    scene.add(helmetGroup);
+
+    // Paleta de materiais do holograma (Roxo, Azul e Rosa)
+    const matCyanWire = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75
+    });
+
+    const matPinkWire = new THREE.MeshBasicMaterial({
+      color: 0xff007f,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.8
+    });
+
+    const matPurpleWire = new THREE.MeshBasicMaterial({
+      color: 0x8b00ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.7
+    });
+
+    const matVisorGlow = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.22,
+      side: THREE.DoubleSide
+    });
+
+    /* 1. CASCO PRINCIPAL (Domo anatômico estendido de capacete) */
+    const domeGeo = new THREE.SphereGeometry(1.22, 32, 24);
+    // Deforma para o formato aerodinâmico de capacete esportivo
+    const pos = domeGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      let x = pos.getX(i);
+      let y = pos.getY(i);
+      let z = pos.getZ(i);
+
+      // Alonga a parte traseira (aerofólio)
+      if (z < 0 && y > -0.2) {
+        z *= 1.18;
       }
-      animFrameId = requestAnimationFrame(loopAutoRotate);
+      // Achata a abertura inferior do pescoço
+      if (y < -0.7) {
+        y = -0.7 + (y + 0.7) * 0.3;
+      }
+      pos.setXYZ(i, x * 0.96, y * 1.05, z * 1.12);
     }
-    loopAutoRotate();
+    domeGeo.computeVertexNormals();
 
-    function alternarAutoRotate() {
-      autoRotate = !autoRotate;
-      btnAuto.textContent = `Giro: ${autoRotate ? 'ON' : 'OFF'}`;
-      btnAuto.style.background = autoRotate ? 'rgba(247, 37, 133, 0.2)' : 'rgba(255, 255, 255, 0.08)';
+    const shellMesh = new THREE.Mesh(domeGeo, matPurpleWire);
+    helmetGroup.add(shellMesh);
+
+    /* 2. QUEIXEIRA FRONTAL (Característica do capacete fechado) */
+    const chinGeo = new THREE.CylinderGeometry(0.85, 0.72, 0.58, 20, 4, false, -Math.PI / 3, (2 * Math.PI) / 3);
+    const chinMesh = new THREE.Mesh(chinGeo, matPinkWire);
+    chinMesh.position.set(0, -0.42, 0.75);
+    chinMesh.rotation.x = 0.15;
+    helmetGroup.add(chinMesh);
+
+    // Grade de ventilação frontal da queixeira
+    const ventGeo = new THREE.BoxGeometry(0.35, 0.18, 0.1, 6, 3, 1);
+    const ventMesh = new THREE.Mesh(ventGeo, matCyanWire);
+    ventMesh.position.set(0, -0.42, 1.25);
+    helmetGroup.add(ventMesh);
+
+    /* 3. VISEIRA PANORÂMICA CURVA */
+    const visorGeo = new THREE.CylinderGeometry(1.08, 1.02, 0.65, 32, 6, true, -Math.PI / 2.3, (2 * Math.PI) / 2.3);
+    const visorWire = new THREE.Mesh(visorGeo, matCyanWire);
+    const visorSolid = new THREE.Mesh(visorGeo, matVisorGlow);
+    visorWire.position.set(0, 0.08, 0.28);
+    visorSolid.position.set(0, 0.08, 0.28);
+    helmetGroup.add(visorWire);
+    helmetGroup.add(visorSolid);
+
+    // Linha superior neon da viseira
+    const visorEdgeGeo = new THREE.TorusGeometry(1.07, 0.015, 8, 32, Math.PI * 0.85);
+    const visorEdgeMesh = new THREE.Mesh(visorEdgeGeo, matPinkWire);
+    visorEdgeMesh.rotation.x = Math.PI / 2;
+    visorEdgeMesh.rotation.z = -Math.PI * 0.425;
+    visorEdgeMesh.position.set(0, 0.38, 0.28);
+    helmetGroup.add(visorEdgeMesh);
+
+    /* 4. PIVÔS LATERAIS DE FIXAÇÃO DA VISEIRA */
+    const pivotGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.05, 16);
+    const pivotL = new THREE.Mesh(pivotGeo, matPinkWire);
+    pivotL.position.set(-1.12, 0.05, 0.2);
+    pivotL.rotation.z = Math.PI / 2;
+    const pivotR = pivotL.clone();
+    pivotR.position.x = 1.12;
+    helmetGroup.add(pivotL);
+    helmetGroup.add(pivotR);
+
+    /* 5. ENTRADAS DE AR SUPERIORES (Vents do topo) */
+    const topVentGeo = new THREE.ConeGeometry(0.12, 0.45, 8);
+    const ventL = new THREE.Mesh(topVentGeo, matCyanWire);
+    ventL.position.set(-0.35, 1.15, 0.1);
+    ventL.rotation.x = -Math.PI / 3;
+    ventL.rotation.z = 0.15;
+
+    const ventR = ventL.clone();
+    ventR.position.x = 0.35;
+    ventR.rotation.z = -0.15;
+    helmetGroup.add(ventL);
+    helmetGroup.add(ventR);
+
+    /* 6. SPOILER / AEROFÓLIO TRASEIRO */
+    const spoilerGeo = new THREE.TorusGeometry(0.85, 0.06, 8, 24, Math.PI * 0.8);
+    const spoilerMesh = new THREE.Mesh(spoilerGeo, matPinkWire);
+    spoilerMesh.rotation.x = Math.PI * 0.4;
+    spoilerMesh.rotation.z = -Math.PI * 0.4;
+    spoilerMesh.position.set(0, 0.35, -0.9);
+    helmetGroup.add(spoilerMesh);
+
+    /* 7. NUVEM DE PONTOS / PARTÍCULAS HOLOGRÁFICAS */
+    const pCount = 650;
+    const pGeo = new THREE.BufferGeometry();
+    const pCoords = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount * 3; i += 3) {
+      const u = Math.random();
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 1.15 + (Math.random() - 0.5) * 0.3;
+      pCoords[i] = r * Math.sin(phi) * Math.cos(theta);
+      pCoords[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pCoords[i + 2] = r * Math.cos(phi) * 1.1;
+    }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pCoords, 3));
+    const pMat = new THREE.PointsMaterial({
+      color: 0x00f0ff,
+      size: 0.025,
+      transparent: true,
+      opacity: 0.6
+    });
+    const pointsMesh = new THREE.Points(pGeo, pMat);
+    helmetGroup.add(pointsMesh);
+
+    /* 8. BASE HOLOGRÁFICA LIDAR COM ANÉIS GIRATÓRIOS */
+    const baseGroup = new THREE.Group();
+    baseGroup.position.y = -1.35;
+    scene.add(baseGroup);
+
+    const ring1 = new THREE.Mesh(new THREE.RingGeometry(1.3, 1.34, 48), matCyanWire);
+    ring1.rotation.x = -Math.PI / 2;
+    baseGroup.add(ring1);
+
+    const ring2 = new THREE.Mesh(new THREE.RingGeometry(0.9, 0.93, 36), matPinkWire);
+    ring2.rotation.x = -Math.PI / 2;
+    baseGroup.add(ring2);
+
+    const ring3 = new THREE.Mesh(new THREE.RingGeometry(1.6, 1.62, 64), matPurpleWire);
+    ring3.rotation.x = -Math.PI / 2;
+    baseGroup.add(ring3);
+
+    /* Ângulo de inclinação esportiva */
+    helmetGroup.rotation.x = 0.12;
+    helmetGroup.position.y = 0.05;
+
+    /* ========================================================
+       CONTROLES 360° (MOUSE, TOUCH & ROTAÇÃO AUTOMÁTICA)
+       ======================================================== */
+    let isDragging = false;
+    let prevMouseX = 0;
+    let autoRotate = true;
+    let rotSpeed = 0.008;
+
+    function onDown(x) {
+      isDragging = true;
+      autoRotate = false;
+      prevMouseX = x;
     }
 
-    // Mouse (Desktop)
-    container.addEventListener('mousedown', (e) => {
-      arrastando = true;
-      inicioX = e.clientX;
-      inicioY = e.clientY;
+    function onMove(x) {
+      if (!isDragging) return;
+      const delta = x - prevMouseX;
+      helmetGroup.rotation.y += delta * 0.01;
+      prevMouseX = x;
+      updateHud();
+    }
+
+    function onUp() {
+      isDragging = false;
+      setTimeout(() => { autoRotate = true; }, 2500);
+    }
+
+    container.addEventListener('mousedown', (e) => onDown(e.clientX));
+    window.addEventListener('mousemove', (e) => onMove(e.clientX));
+    window.addEventListener('mouseup', onUp);
+
+    container.addEventListener('touchstart', (e) => onDown(e.touches[0].clientX));
+    window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX));
+    window.addEventListener('touchend', onUp);
+
+    function updateHud() {
+      let deg = Math.round((helmetGroup.rotation.y * (180 / Math.PI)) % 360);
+      if (deg < 0) deg += 360;
+      angleDisplay.textContent = `AZIMUTE: ${deg}°`;
+    }
+
+    // Sequência de montagem e abertura do painel
+    setTimeout(() => {
+      stage.classList.add('ready');
+    }, 2800);
+
+    // Loop de animação contínuo
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (autoRotate) {
+        helmetGroup.rotation.y += rotSpeed;
+        updateHud();
+      }
+
+      // Rotação dos anéis LiDAR da base holográfica
+      ring1.rotation.z += 0.005;
+      ring2.rotation.z -= 0.008;
+      ring3.rotation.z += 0.002;
+
+      // Pulsação suave vertical
+      helmetGroup.position.y = 0.05 + Math.sin(Date.now() * 0.002) * 0.04;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Ajuste responsivo de tela
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
     });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!arrastando) return;
-      const deltaX = e.clientX - inicioX;
-      const deltaY = e.clientY - inicioY;
-
-      anguloAtualY += deltaX * 0.7;
-      anguloAtualX = Math.max(-25, Math.min(25, anguloAtualX + deltaY * 0.2));
-
-      inicioX = e.clientX;
-      inicioY = e.clientY;
-      atualizarTransform();
-    });
-
-    window.addEventListener('mouseup', () => { arrastando = false; });
-
-    // Touch (Mobile / Tablet)
-    container.addEventListener('touchstart', (e) => {
-      arrastando = true;
-      inicioX = e.touches[0].clientX;
-      inicioY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      if (!arrastando) return;
-      const deltaX = e.touches[0].clientX - inicioX;
-      const deltaY = e.touches[0].clientY - inicioY;
-
-      anguloAtualY += deltaX * 0.8;
-      anguloAtualX = Math.max(-25, Math.min(25, anguloAtualX + deltaY * 0.25));
-
-      inicioX = e.touches[0].clientX;
-      inicioY = e.touches[0].clientY;
-      atualizarTransform();
-    }, { passive: true });
-
-    window.addEventListener('touchend', () => { arrastando = false; });
   </script>
 </body>
 </html>
