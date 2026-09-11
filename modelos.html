@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modelos da Atualidade - Smart Helmets</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #070710;
+      background-image: 
+        linear-gradient(rgba(123, 44, 191, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
+      background-size: 36px 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #fff;
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    /* Moldura externa animada na mesma tonalidade */
+    .moldura-cyber {
+      position: relative;
+      width: 100%;
+      max-width: 1280px;
+      height: min(92vh, 800px);
+      border-radius: 28px;
+      padding: 3px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 40px rgba(123, 44, 191, 0.35), 0 0 90px rgba(0, 210, 255, 0.2);
+    }
+
+    .moldura-cyber::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      background: conic-gradient(
+        transparent,
+        #f72585 15%,
+        transparent 35%,
+        #7b2cbf 50%,
+        transparent 65%,
+        #00d2ff 80%,
+        transparent 100%
+      );
+      animation: girarBorda 6s linear infinite;
+    }
+
+    .moldura-cyber::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes girarBorda {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #100b21 0%, #05040a 85%);
+      border-radius: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 40px;
+      overflow: hidden;
+    }
+
+    /* BOTÃO VOLTAR */
+    .btn-voltar {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      transition: all 0.25s;
+    }
+    .btn-voltar:hover {
+      color: #00d2ff;
+      border-color: #00d2ff;
+      background: rgba(0, 210, 255, 0.1);
+    }
+
+    /* COLUNAS LATERAIS (2 FOTOS DE CADA LADO) */
+    .coluna-modelos {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 290px;
+      z-index: 10;
+    }
+
+    .card-capacete {
+      background: rgba(18, 14, 34, 0.75);
+      border: 1px solid rgba(123, 44, 191, 0.35);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+    }
+
+    .card-capacete:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: #f72585;
+      box-shadow: 0 14px 35px rgba(247, 37, 133, 0.35);
+    }
+
+    .card-capacete img {
+      width: 100%;
+      height: 135px;
+      object-cover: cover;
+      display: block;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card-info {
+      padding: 12px 14px;
+    }
+
+    .card-info h3 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .card-info p {
+      font-size: 0.78rem;
+      color: #00d2ff;
+      font-weight: 600;
+    }
+
+    /* CÍRCULO CENTRAL ANIMADO NAS CORES DO TEMA */
+    .circulo-central-wrapper {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 8;
+    }
+
+    /* Anel 1: Rotação Roxo / Rosa */
+    .anel-exterior {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px dashed #f72585;
+      animation: girarHorario 14s linear infinite;
+      box-shadow: 0 0 35px rgba(247, 37, 133, 0.4);
+    }
+
+    /* Anel 2: Rotação Azul Ciano reversa */
+    .anel-meio {
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: #00d2ff;
+      border-bottom-color: #7b2cbf;
+      animation: girarAntiHorario 8s linear infinite;
+    }
+
+    /* Anel 3: Pulsação de energia */
+    .anel-pulsante {
+      position: absolute;
+      inset: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(123, 44, 191, 0.35) 0%, rgba(7, 7, 16, 0.9) 70%);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      animation: pulsoCentral 2.4s ease-in-out infinite alternate;
+      box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.3);
+    }
+
+    @keyframes girarHorario {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes girarAntiHorario {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes pulsoCentral {
+      0% { transform: scale(0.96); box-shadow: 0 0 20px rgba(123, 44, 191, 0.4); }
+      100% { transform: scale(1.04); box-shadow: 0 0 45px rgba(0, 210, 255, 0.7); }
+    }
+
+    /* TEXTO CENTRALIZADO AO MEIO DO CÍRCULO */
+    .conteudo-circulo {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 30px;
+      max-width: 280px;
+    }
+
+    .conteudo-circulo .badge-vr {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: #00d2ff;
+      text-transform: uppercase;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .conteudo-circulo h2 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff, #f72585, #00d2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .conteudo-circulo p {
+      font-size: 0.82rem;
+      color: #d1d5db;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="moldura-cyber">
+    <div class="viewport">
+
+      <a href="index.html" class="btn-voltar">
+        ← Voltar ao Simulador
+      </a>
+
+      <!-- COLUNA ESQUERDA: 2 MODELOS -->
+      <div class="coluna-modelos">
+        <div class="card-capacete">
+          <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80" alt="Capacete Forcite MK1S" />
+          <div class="card-info">
+            <h3>Forcite MK1S Smart</h3>
+            <p>Ray-Cast HUD & Câmera 4K</p>
+          </div>
+        </div>
+
+        <div class="card-capacete">
+          <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80" alt="Capacete Shoei X-SPR Pro" />
+          <div class="card-info">
+            <h3>Shoei Optics HUD</h3>
+            <p>Fibra AIM+ com Radar LiDAR</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CÍRCULO CENTRAL ANIMADO COM TEXTO -->
+      <div class="circulo-central-wrapper">
+        <div class="anel-exterior"></div>
+        <div class="anel-meio"></div>
+        <div class="anel-pulsante"></div>
+
+        <div class="conteudo-circulo">
+          <span class="badge-vr">Realidade Aumentada</span>
+          <h2>A Nova Era da Condução</h2>
+          <p>Telemetria holográfica, detecção inteligente de pontos cegos e navegação espacial projetada diretamente na viseira.</p>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: 2 MODELOS -->
+      <div class="coluna-modelos">
+        <div class="card-capacete">
+          <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=600&q=80" alt="Capacete AGV Pista GP RR" />
+          <div class="card-info">
+            <h3>AGV Carbon VR-Pro</h3>
+            <p>100% Fibra de Carbono 3K</p>
+          </div>
+        </div>
+
+        <div class="card-capacete">
+          <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80" alt="Capacete Jarvish X-AR" />
+          <div class="card-info">
+            <h3>Jarvish X-AR HUD</h3>
+            <p>Controle por Voz Alexa & Retícula 360°</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
