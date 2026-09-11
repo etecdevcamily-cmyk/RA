@@ -117,7 +117,7 @@
       text-transform: uppercase;
     }
 
-    /* Grid central: Coluna Esquerda | Círculo Central | Coluna Direita */
+    /* Grid central */
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1fr 340px 1fr;
@@ -125,7 +125,6 @@
       gap: 28px;
     }
 
-    /* Colunas laterais */
     .column {
       display: flex;
       flex-direction: column;
@@ -166,10 +165,6 @@
       box-shadow: 0 0 30px rgba(0, 240, 255, 0.45);
     }
 
-    .photo-card:active {
-      transform: scale(0.98);
-    }
-
     .card-thumb {
       width: 100%;
       height: 140px;
@@ -203,6 +198,7 @@
       background: rgba(5, 5, 12, 0.75);
       border: 1px solid currentColor;
       backdrop-filter: blur(4px);
+      z-index: 2;
     }
 
     .badge-tag.cyan { color: var(--cyan); }
@@ -220,6 +216,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      z-index: 2;
     }
 
     .card-info {
@@ -240,11 +237,13 @@
       line-height: 1.4;
     }
 
-    /* Círculo Central Pulsante */
+    /* Coluna Central com Círculo e Botão */
     .center-sphere-wrapper {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      gap: 20px;
     }
 
     .circle-radar {
@@ -259,7 +258,6 @@
       padding: 24px;
     }
 
-    /* Anéis giratórios do círculo */
     .circle-radar::before {
       content: '';
       position: absolute;
@@ -280,15 +278,8 @@
       animation: spinCounter 10s linear infinite;
     }
 
-    @keyframes spinClockwise {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes spinCounter {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
+    @keyframes spinClockwise { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spinCounter { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
     .circle-inner {
       width: 100%;
@@ -330,6 +321,45 @@
       line-height: 1.45;
     }
 
+    /* Botão Neon embaixo do Círculo */
+    .btn-central-venda {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 310px;
+      padding: 13px 22px;
+      background: linear-gradient(90deg, #7928ca 0%, #ff0080 50%, #00f0ff 100%);
+      background-size: 200% auto;
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 0, 128, 0.45);
+      transition: all 0.35s ease;
+      z-index: 3;
+    }
+
+    .btn-central-venda:hover {
+      background-position: right center;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.7);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .btn-central-venda svg {
+      transition: transform 0.3s;
+    }
+
+    .btn-central-venda:hover svg {
+      transform: translateX(4px);
+    }
+
     /* Responsividade */
     @media (max-width: 1040px) {
       .dashboard-grid {
@@ -349,27 +379,22 @@
 
   <div class="main-frame">
     <div class="stage-content">
-      
-      <!-- Topo -->
       <div class="top-nav">
         <a href="index.html" class="btn-voltar">← VOLTAR AO HOLOGRAMA 360°</a>
         <span class="nav-label">SISTEMA AR // VISÃO INTEGRAL</span>
       </div>
 
-      <!-- Dashboard principal com 4 fotos clicáveis -->
       <div class="dashboard-grid">
-        
-        <!-- COLUNA ESQUERDA: TELEMETRIA & GPS -->
+        <!-- COLUNA ESQUERDA -->
         <div class="column">
           <div class="col-title col-left-title">
             <span>📡 TELEMETRIA & ROTA GPS</span>
           </div>
 
-          <!-- CARD 1 -> rota.html -->
           <a href="rota.html" class="photo-card" title="Clique para abrir detalhes">
             <div class="card-thumb">
               <span class="badge-tag cyan">GPS ROUTE ACTIVE</span>
-              <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80" alt="Traçado de Rota" />
+              <img src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=800&q=80" alt="Traçado de Rota em Curva" />
               <div class="card-meta">⮑ Curva à Direita // 250m</div>
             </div>
             <div class="card-info">
@@ -378,11 +403,10 @@
             </div>
           </a>
 
-          <!-- CARD 2 -> satelite.html -->
           <a href="satelite.html" class="photo-card" title="Clique para abrir detalhes">
             <div class="card-thumb">
               <span class="badge-tag cyan">MAP LIDAR & SAT</span>
-              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80" alt="Mapeamento Satélite" />
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" alt="Mapeamento por Satélite" />
               <div class="card-meta">↑ Destino: 4.8 km // Radar OK</div>
             </div>
             <div class="card-info">
@@ -392,7 +416,7 @@
           </a>
         </div>
 
-        <!-- CÍRCULO CENTRAL ANIMADO -->
+        <!-- CÍRCULO CENTRAL + NOVO BOTÃO DE VENDA -->
         <div class="center-sphere-wrapper">
           <div class="circle-radar">
             <div class="circle-inner">
@@ -403,19 +427,27 @@
               </p>
             </div>
           </div>
+
+          <!-- BOTÃO ACRESCENTADO -->
+          <a href="venda.html" class="btn-central-venda">
+            <span>Adquirir Lente AR</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
         </div>
 
-        <!-- COLUNA DIREITA: VISEIRA HOLOGRÁFICA -->
+        <!-- COLUNA DIREITA -->
         <div class="column">
           <div class="col-title col-right-title">
             <span>VISEIRA HOLOGRÁFICA AR ⚡</span>
           </div>
 
-          <!-- CARD 3 -> hud-seta.html -->
           <a href="hud-seta.html" class="photo-card" title="Clique para abrir detalhes">
             <div class="card-thumb">
               <span class="badge-tag pink">HUD VISOR AR</span>
-              <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" alt="HUD na Viseira" />
+              <img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=800&q=80" alt="HUD na Viseira do Piloto" />
               <div class="card-meta">↗ 88 KM/H • GPS AR</div>
             </div>
             <div class="card-info">
@@ -424,11 +456,10 @@
             </div>
           </a>
 
-          <!-- CARD 4 -> reticula.html -->
           <a href="reticula.html" class="photo-card" title="Clique para abrir detalhes">
             <div class="card-thumb">
               <span class="badge-tag pink">OPTICAL LENS VR</span>
-              <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80" alt="Lente com Retícula" />
+              <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80" alt="Lente e Viseira de Capacete de Moto" />
               <div class="card-meta">⊕ WAYPOINT LOCKED</div>
             </div>
             <div class="card-info">
@@ -437,9 +468,7 @@
             </div>
           </a>
         </div>
-
       </div>
-
     </div>
   </div>
 
