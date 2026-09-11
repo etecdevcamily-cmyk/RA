@@ -13,21 +13,20 @@
 
     body {
       min-height: 100vh;
-      background: #070710;
+      background: #05040a;
       background-image: 
         linear-gradient(rgba(123, 44, 191, 0.08) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
-      background-size: 36px 36px;
+      background-size: 32px 32px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       color: #fff;
       overflow: hidden;
-      padding: 24px;
+      padding: 20px;
     }
 
-    /* Moldura externa animada na mesma tonalidade */
     .moldura-cyber {
       position: relative;
       width: 100%;
@@ -39,7 +38,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 40px rgba(123, 44, 191, 0.35), 0 0 90px rgba(0, 210, 255, 0.2);
+      box-shadow: 0 0 45px rgba(123, 44, 191, 0.4), 0 0 95px rgba(0, 210, 255, 0.25);
     }
 
     .moldura-cyber::before {
@@ -78,7 +77,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at center, #100b21 0%, #05040a 85%);
+      background: radial-gradient(circle at center, #100820 0%, #05040a 85%);
       border-radius: 25px;
       display: flex;
       justify-content: space-between;
@@ -87,7 +86,6 @@
       overflow: hidden;
     }
 
-    /* BOTÃO VOLTAR */
     .btn-voltar {
       position: absolute;
       top: 24px;
@@ -108,13 +106,14 @@
       border-radius: 8px;
       transition: all 0.25s;
     }
+
     .btn-voltar:hover {
       color: #00d2ff;
       border-color: #00d2ff;
       background: rgba(0, 210, 255, 0.1);
     }
 
-    /* COLUNAS LATERAIS (2 FOTOS DE CADA LADO) */
+    /* COLUNAS COM 2 FOTOS DE CADA LADO */
     .coluna-modelos {
       display: flex;
       flex-direction: column;
@@ -130,19 +129,18 @@
       overflow: hidden;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      position: relative;
     }
 
     .card-capacete:hover {
       transform: translateY(-6px) scale(1.02);
       border-color: #f72585;
-      box-shadow: 0 14px 35px rgba(247, 37, 133, 0.35);
+      box-shadow: 0 14px 35px rgba(247, 37, 133, 0.4);
     }
 
     .card-capacete img {
       width: 100%;
       height: 135px;
-      object-cover: cover;
+      object-fit: cover;
       display: block;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -174,7 +172,6 @@
       z-index: 8;
     }
 
-    /* Anel 1: Rotação Roxo / Rosa */
     .anel-exterior {
       position: absolute;
       inset: 0;
@@ -184,7 +181,6 @@
       box-shadow: 0 0 35px rgba(247, 37, 133, 0.4);
     }
 
-    /* Anel 2: Rotação Azul Ciano reversa */
     .anel-meio {
       position: absolute;
       inset: 22px;
@@ -195,7 +191,6 @@
       animation: girarAntiHorario 8s linear infinite;
     }
 
-    /* Anel 3: Pulsação de energia */
     .anel-pulsante {
       position: absolute;
       inset: 44px;
@@ -219,7 +214,6 @@
       100% { transform: scale(1.04); box-shadow: 0 0 45px rgba(0, 210, 255, 0.7); }
     }
 
-    /* TEXTO CENTRALIZADO AO MEIO DO CÍRCULO */
     .conteudo-circulo {
       position: relative;
       z-index: 10;
@@ -261,10 +255,10 @@
     <div class="viewport">
 
       <a href="index.html" class="btn-voltar">
-        ← Voltar ao Simulador
+        ← Voltar ao Holograma 360°
       </a>
 
-      <!-- COLUNA ESQUERDA: 2 MODELOS -->
+      <!-- LADO ESQUERDO: 2 MODELOS -->
       <div class="coluna-modelos">
         <div class="card-capacete">
           <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80" alt="Capacete Forcite MK1S" />
@@ -283,7 +277,7 @@
         </div>
       </div>
 
-      <!-- CÍRCULO CENTRAL ANIMADO COM TEXTO -->
+      <!-- CÍRCULO CENTRAL ANIMADO -->
       <div class="circulo-central-wrapper">
         <div class="anel-exterior"></div>
         <div class="anel-meio"></div>
@@ -296,7 +290,7 @@
         </div>
       </div>
 
-      <!-- COLUNA DIREITA: 2 MODELOS -->
+      <!-- LADO DIREITO: 2 MODELOS -->
       <div class="coluna-modelos">
         <div class="card-capacete">
           <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=600&q=80" alt="Capacete AGV Pista GP RR" />
