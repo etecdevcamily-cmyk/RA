@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AERO-X // Holographic AR Helmet</title>
 
+  <!-- FAVICON DE CAPACETE PERSONALIZADO (SUBSTITUI O GLOBO) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%2300f0ff'/><stop offset='50%25' stop-color='%238b00ff'/><stop offset='100%25' stop-color='%23ff007f'/></linearGradient></defs><circle cx='50' cy='50' r='48' fill='%2305050c' stroke='url(%23grad)' stroke-width='4'/><path d='M25 50 C25 28 36 20 54 20 C72 20 80 32 80 50 C80 62 76 74 65 74 C58 74 54 70 48 70 C42 70 38 74 34 74 C26 74 25 64 25 50 Z' fill='none' stroke='url(%23grad)' stroke-width='4'/><path d='M42 42 C48 38 68 38 76 46 L70 56 C64 50 48 50 42 54 Z' fill='%2300f0ff' opacity='0.85'/></svg>" />
+
   <!-- Biblioteca Three.js 3D para renderização procedural -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -35,7 +38,6 @@
       padding: 20px;
     }
 
-    /* Grid de fundo estilo Cyberpunk */
     body::before {
       content: '';
       position: fixed;
@@ -48,7 +50,6 @@
       z-index: 0;
     }
 
-    /* Moldura externa com borda animada cônica */
     .viewport-frame {
       position: relative;
       width: 100%;
@@ -72,7 +73,6 @@
       to { --angle: 360deg; }
     }
 
-    /* Contêiner principal interno */
     .stage {
       position: relative;
       width: 100%;
@@ -86,7 +86,6 @@
       backdrop-filter: blur(12px);
     }
 
-    /* Barra de status superior do HUD */
     .hud-bar {
       position: absolute;
       top: 20px;
@@ -127,7 +126,6 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    /* Layout principal: visor 3D à esquerda e texto à direita */
     .layout-wrapper {
       position: relative;
       width: 100%;
@@ -139,7 +137,6 @@
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Área do Canvas 3D */
     .canvas-container {
       position: relative;
       width: 480px;
@@ -163,7 +160,6 @@
       outline: none;
     }
 
-    /* Indicador HUD de 360° sobre o capacete */
     .rotate-hint {
       position: absolute;
       bottom: 24px;
@@ -191,7 +187,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Painel que desliza de trás do capacete para a lateral direita */
     .info-panel {
       position: absolute;
       right: 50px;
@@ -203,7 +198,6 @@
       z-index: 6;
     }
 
-    /* Ativação após a montagem do capacete */
     .stage.ready .canvas-container {
       transform: translateX(-220px);
     }
@@ -275,7 +269,6 @@
       color: #fff;
     }
 
-    /* Botão de ação neon */
     .btn-action {
       display: inline-flex;
       align-items: center;
@@ -312,7 +305,6 @@
       transform: translateX(5px);
     }
 
-    /* Responsividade */
     @media (max-width: 960px) {
       .stage.ready .canvas-container {
         transform: translateY(-130px) scale(0.85);
@@ -337,16 +329,13 @@
   <div class="viewport-frame">
     <div class="stage" id="stage">
       
-      <!-- HUD Superior -->
       <div class="hud-bar">
         <span class="badge-live">Holograma Ativo // 360° Real</span>
         <span id="angleValue">AZIMUTE: 0°</span>
         <span>MODO: FULL-FACE AR</span>
       </div>
 
-      <!-- Área de Visualização 3D e Conteúdo -->
       <div class="layout-wrapper">
-        
         <div class="canvas-container" id="canvasBox" title="Arraste para girar em 360°">
           <canvas id="helmetCanvas"></canvas>
           <div class="rotate-hint">
@@ -357,7 +346,6 @@
           </div>
         </div>
 
-        <!-- Painel de Especificações que desliza da lateral -->
         <div class="info-panel" id="infoPanel">
           <span class="tag-serie">NEURAL MOTORCYCLE SYSTEM</span>
           <h1>CAPACETE AR // MK-IV</h1>
@@ -386,7 +374,6 @@
             </div>
           </div>
 
-          <!-- Botão para a próxima página -->
           <a href="modelos.html" class="btn-action">
             Acessar Modelos & Lentes
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -395,18 +382,12 @@
             </svg>
           </a>
         </div>
-
       </div>
 
     </div>
   </div>
 
   <script>
-    /* ========================================================
-       CONSTRUÇÃO DO HOLOGRAMA PROCEDURAL 3D DE CAPACETE DE MOTO
-       (Sem imagens externas: 100% Three.js nativo em Wireframe Neon)
-       ======================================================== */
-
     const canvas = document.getElementById('helmetCanvas');
     const container = document.getElementById('canvasBox');
     const angleDisplay = document.getElementById('angleValue');
@@ -416,85 +397,42 @@
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 0.4, 5.2);
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      alpha: true,
-      antialias: true
-    });
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Grupo principal do Capacete
     const helmetGroup = new THREE.Group();
     scene.add(helmetGroup);
 
-    // Paleta de materiais do holograma (Roxo, Azul e Rosa)
-    const matCyanWire = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.75
-    });
+    const matCyanWire = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.75 });
+    const matPinkWire = new THREE.MeshBasicMaterial({ color: 0xff007f, wireframe: true, transparent: true, opacity: 0.8 });
+    const matPurpleWire = new THREE.MeshBasicMaterial({ color: 0x8b00ff, wireframe: true, transparent: true, opacity: 0.7 });
+    const matVisorGlow = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.22, side: THREE.DoubleSide });
 
-    const matPinkWire = new THREE.MeshBasicMaterial({
-      color: 0xff007f,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.8
-    });
-
-    const matPurpleWire = new THREE.MeshBasicMaterial({
-      color: 0x8b00ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.7
-    });
-
-    const matVisorGlow = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      transparent: true,
-      opacity: 0.22,
-      side: THREE.DoubleSide
-    });
-
-    /* 1. CASCO PRINCIPAL (Domo anatômico estendido de capacete) */
     const domeGeo = new THREE.SphereGeometry(1.22, 32, 24);
-    // Deforma para o formato aerodinâmico de capacete esportivo
     const pos = domeGeo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
       let x = pos.getX(i);
       let y = pos.getY(i);
       let z = pos.getZ(i);
-
-      // Alonga a parte traseira (aerofólio)
-      if (z < 0 && y > -0.2) {
-        z *= 1.18;
-      }
-      // Achata a abertura inferior do pescoço
-      if (y < -0.7) {
-        y = -0.7 + (y + 0.7) * 0.3;
-      }
+      if (z < 0 && y > -0.2) z *= 1.18;
+      if (y < -0.7) y = -0.7 + (y + 0.7) * 0.3;
       pos.setXYZ(i, x * 0.96, y * 1.05, z * 1.12);
     }
     domeGeo.computeVertexNormals();
+    helmetGroup.add(new THREE.Mesh(domeGeo, matPurpleWire));
 
-    const shellMesh = new THREE.Mesh(domeGeo, matPurpleWire);
-    helmetGroup.add(shellMesh);
-
-    /* 2. QUEIXEIRA FRONTAL (Característica do capacete fechado) */
     const chinGeo = new THREE.CylinderGeometry(0.85, 0.72, 0.58, 20, 4, false, -Math.PI / 3, (2 * Math.PI) / 3);
     const chinMesh = new THREE.Mesh(chinGeo, matPinkWire);
     chinMesh.position.set(0, -0.42, 0.75);
     chinMesh.rotation.x = 0.15;
     helmetGroup.add(chinMesh);
 
-    // Grade de ventilação frontal da queixeira
     const ventGeo = new THREE.BoxGeometry(0.35, 0.18, 0.1, 6, 3, 1);
     const ventMesh = new THREE.Mesh(ventGeo, matCyanWire);
     ventMesh.position.set(0, -0.42, 1.25);
     helmetGroup.add(ventMesh);
 
-    /* 3. VISEIRA PANORÂMICA CURVA */
     const visorGeo = new THREE.CylinderGeometry(1.08, 1.02, 0.65, 32, 6, true, -Math.PI / 2.3, (2 * Math.PI) / 2.3);
     const visorWire = new THREE.Mesh(visorGeo, matCyanWire);
     const visorSolid = new THREE.Mesh(visorGeo, matVisorGlow);
@@ -503,7 +441,6 @@
     helmetGroup.add(visorWire);
     helmetGroup.add(visorSolid);
 
-    // Linha superior neon da viseira
     const visorEdgeGeo = new THREE.TorusGeometry(1.07, 0.015, 8, 32, Math.PI * 0.85);
     const visorEdgeMesh = new THREE.Mesh(visorEdgeGeo, matPinkWire);
     visorEdgeMesh.rotation.x = Math.PI / 2;
@@ -511,7 +448,6 @@
     visorEdgeMesh.position.set(0, 0.38, 0.28);
     helmetGroup.add(visorEdgeMesh);
 
-    /* 4. PIVÔS LATERAIS DE FIXAÇÃO DA VISEIRA */
     const pivotGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.05, 16);
     const pivotL = new THREE.Mesh(pivotGeo, matPinkWire);
     pivotL.position.set(-1.12, 0.05, 0.2);
@@ -521,20 +457,17 @@
     helmetGroup.add(pivotL);
     helmetGroup.add(pivotR);
 
-    /* 5. ENTRADAS DE AR SUPERIORES (Vents do topo) */
     const topVentGeo = new THREE.ConeGeometry(0.12, 0.45, 8);
     const ventL = new THREE.Mesh(topVentGeo, matCyanWire);
     ventL.position.set(-0.35, 1.15, 0.1);
     ventL.rotation.x = -Math.PI / 3;
     ventL.rotation.z = 0.15;
-
     const ventR = ventL.clone();
     ventR.position.x = 0.35;
     ventR.rotation.z = -0.15;
     helmetGroup.add(ventL);
     helmetGroup.add(ventR);
 
-    /* 6. SPOILER / AEROFÓLIO TRASEIRO */
     const spoilerGeo = new THREE.TorusGeometry(0.85, 0.06, 8, 24, Math.PI * 0.8);
     const spoilerMesh = new THREE.Mesh(spoilerGeo, matPinkWire);
     spoilerMesh.rotation.x = Math.PI * 0.4;
@@ -542,12 +475,10 @@
     spoilerMesh.position.set(0, 0.35, -0.9);
     helmetGroup.add(spoilerMesh);
 
-    /* 7. NUVEM DE PONTOS / PARTÍCULAS HOLOGRÁFICAS */
     const pCount = 650;
     const pGeo = new THREE.BufferGeometry();
     const pCoords = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount * 3; i += 3) {
-      const u = Math.random();
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const r = 1.15 + (Math.random() - 0.5) * 0.3;
@@ -556,16 +487,9 @@
       pCoords[i + 2] = r * Math.cos(phi) * 1.1;
     }
     pGeo.setAttribute('position', new THREE.BufferAttribute(pCoords, 3));
-    const pMat = new THREE.PointsMaterial({
-      color: 0x00f0ff,
-      size: 0.025,
-      transparent: true,
-      opacity: 0.6
-    });
-    const pointsMesh = new THREE.Points(pGeo, pMat);
-    helmetGroup.add(pointsMesh);
+    const pMat = new THREE.PointsMaterial({ color: 0x00f0ff, size: 0.025, transparent: true, opacity: 0.6 });
+    helmetGroup.add(new THREE.Points(pGeo, pMat));
 
-    /* 8. BASE HOLOGRÁFICA LIDAR COM ANÉIS GIRATÓRIOS */
     const baseGroup = new THREE.Group();
     baseGroup.position.y = -1.35;
     scene.add(baseGroup);
@@ -582,24 +506,15 @@
     ring3.rotation.x = -Math.PI / 2;
     baseGroup.add(ring3);
 
-    /* Ângulo de inclinação esportiva */
     helmetGroup.rotation.x = 0.12;
     helmetGroup.position.y = 0.05;
 
-    /* ========================================================
-       CONTROLES 360° (MOUSE, TOUCH & ROTAÇÃO AUTOMÁTICA)
-       ======================================================== */
     let isDragging = false;
     let prevMouseX = 0;
     let autoRotate = true;
     let rotSpeed = 0.008;
 
-    function onDown(x) {
-      isDragging = true;
-      autoRotate = false;
-      prevMouseX = x;
-    }
-
+    function onDown(x) { isDragging = true; autoRotate = false; prevMouseX = x; }
     function onMove(x) {
       if (!isDragging) return;
       const delta = x - prevMouseX;
@@ -607,11 +522,7 @@
       prevMouseX = x;
       updateHud();
     }
-
-    function onUp() {
-      isDragging = false;
-      setTimeout(() => { autoRotate = true; }, 2500);
-    }
+    function onUp() { isDragging = false; setTimeout(() => { autoRotate = true; }, 2500); }
 
     container.addEventListener('mousedown', (e) => onDown(e.clientX));
     window.addEventListener('mousemove', (e) => onMove(e.clientX));
@@ -627,33 +538,22 @@
       angleDisplay.textContent = `AZIMUTE: ${deg}°`;
     }
 
-    // Sequência de montagem e abertura do painel
-    setTimeout(() => {
-      stage.classList.add('ready');
-    }, 2800);
+    setTimeout(() => { stage.classList.add('ready'); }, 2800);
 
-    // Loop de animação contínuo
     function animate() {
       requestAnimationFrame(animate);
-
       if (autoRotate) {
         helmetGroup.rotation.y += rotSpeed;
         updateHud();
       }
-
-      // Rotação dos anéis LiDAR da base holográfica
       ring1.rotation.z += 0.005;
       ring2.rotation.z -= 0.008;
       ring3.rotation.z += 0.002;
-
-      // Pulsação suave vertical
       helmetGroup.position.y = 0.05 + Math.sin(Date.now() * 0.002) * 0.04;
-
       renderer.render(scene, camera);
     }
     animate();
 
-    // Ajuste responsivo de tela
     window.addEventListener('resize', () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
