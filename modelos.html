@@ -3,455 +3,441 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modelos da Atualidade - Smart Helmets</title>
+  <title>Modelos // Telemetria & Viseira AR</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      user-select: none;
+    }
+
+    :root {
+      --cyan: #00f0ff;
+      --pink: #ff007f;
+      --purple: #8b00ff;
+      --dark: #05050c;
     }
 
     body {
       min-height: 100vh;
-      background: #05040a;
-      background-image: 
-        linear-gradient(rgba(123, 44, 191, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
-      background-size: 32px 32px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 50%, #0d091f 0%, #05050c 70%, #000002 100%);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
       color: #fff;
-      overflow: hidden;
-      padding: 20px;
-    }
-
-    .moldura-cyber {
-      position: relative;
-      width: 100%;
-      max-width: 1280px;
-      height: min(92vh, 800px);
-      border-radius: 28px;
-      padding: 3px;
-      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 45px rgba(123, 44, 191, 0.4), 0 0 95px rgba(0, 210, 255, 0.25);
-    }
-
-    .moldura-cyber::before {
-      content: '';
-      position: absolute;
-      width: 250%;
-      height: 250%;
-      background: conic-gradient(
-        transparent,
-        #f72585 15%,
-        transparent 35%,
-        #7b2cbf 50%,
-        transparent 65%,
-        #00d2ff 80%,
-        transparent 100%
-      );
-      animation: girarBorda 6s linear infinite;
-    }
-
-    .moldura-cyber::after {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      border-radius: 26px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    @keyframes girarBorda {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .viewport {
+      padding: 24px 16px;
       position: relative;
+    }
+
+    /* Grid de fundo Cyberpunk */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 127, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Borda cônica animada */
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes rotateBorder {
+      to { --angle: 360deg; }
+    }
+
+    .main-frame {
       width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, #100820 0%, #05040a 85%);
-      border-radius: 25px;
+      max-width: 1200px;
+      border-radius: 26px;
+      padding: 3px;
+      background: conic-gradient(from var(--angle, 0deg), var(--cyan), var(--purple), var(--pink), var(--cyan));
+      animation: rotateBorder 7s linear infinite;
+      box-shadow: 0 0 50px rgba(139, 0, 255, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .stage-content {
+      background: rgba(10, 8, 20, 0.94);
+      border-radius: 23px;
+      padding: 32px 28px;
+      backdrop-filter: blur(14px);
+      position: relative;
+    }
+
+    /* Topo com botão de voltar */
+    .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 30px 40px;
-      overflow: hidden;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
     }
 
     .btn-voltar {
-      position: absolute;
-      top: 24px;
-      left: 32px;
-      z-index: 20;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #9ca3af;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 8px 16px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      transition: all 0.25s;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      padding: 8px 18px;
+      border-radius: 30px;
+      color: var(--cyan);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s ease;
     }
 
     .btn-voltar:hover {
-      color: #00d2ff;
-      border-color: #00d2ff;
-      background: rgba(0, 210, 255, 0.1);
+      background: var(--cyan);
+      color: #05050c;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      transform: translateX(-3px);
     }
 
-    /* COLUNAS LATERAIS */
-    .coluna-modelos {
+    .nav-label {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--pink);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Grid central: Coluna Esquerda | Círculo Central | Coluna Direita */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px 1fr;
+      align-items: center;
+      gap: 28px;
+    }
+
+    /* Colunas laterais */
+    .column {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      width: 295px;
-      z-index: 10;
+      gap: 22px;
     }
 
-    .coluna-titulo {
-      font-size: 0.76rem;
+    .col-title {
+      font-size: 0.78rem;
       letter-spacing: 2px;
-      text-transform: uppercase;
       font-weight: 800;
-      color: #00d2ff;
+      text-transform: uppercase;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: -8px;
+      gap: 8px;
     }
 
-    .coluna-direita .coluna-titulo {
-      color: #f72585;
-      justify-content: flex-end;
-    }
+    .col-left-title { color: var(--cyan); }
+    .col-right-title { color: var(--pink); justify-content: flex-end; }
 
-    .card-capacete {
-      background: rgba(18, 14, 34, 0.8);
-      border: 1px solid rgba(123, 44, 191, 0.4);
+    /* Cards clicáveis */
+    .photo-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: rgba(18, 14, 36, 0.85);
+      border: 1px solid rgba(139, 0, 255, 0.35);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55);
-      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      position: relative;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    .card-capacete:hover {
-      transform: translateY(-6px) scale(1.02);
-      border-color: #00d2ff;
-      box-shadow: 0 14px 35px rgba(0, 210, 255, 0.35);
+    .photo-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: var(--cyan);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.45);
     }
 
-    .coluna-direita .card-capacete:hover {
-      border-color: #f72585;
-      box-shadow: 0 14px 35px rgba(247, 37, 133, 0.4);
+    .photo-card:active {
+      transform: scale(0.98);
     }
 
-    .card-media {
-      position: relative;
+    .card-thumb {
       width: 100%;
       height: 140px;
+      position: relative;
       overflow: hidden;
+      background: #000;
     }
 
-    .card-media img {
+    .card-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
+      filter: brightness(0.85) contrast(1.1);
       transition: transform 0.4s ease;
     }
 
-    .card-capacete:hover .card-media img {
-      transform: scale(1.05);
+    .photo-card:hover .card-thumb img {
+      transform: scale(1.08);
+      filter: brightness(1);
     }
 
-    /* OVERLAY HOLOGRÁFICO DE GPS SOBRE AS FOTOS */
-    .overlay-hud {
+    .badge-tag {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(7, 4, 15, 0.2) 0%, rgba(7, 4, 15, 0.75) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 10px 12px;
-      pointer-events: none;
-    }
-
-    .hud-tag-mini {
-      align-self: flex-start;
-      padding: 3px 8px;
-      background: rgba(0, 210, 255, 0.25);
-      border: 1px solid #00d2ff;
-      border-radius: 6px;
+      top: 10px;
+      left: 10px;
       font-size: 0.65rem;
       font-weight: 800;
-      color: #00d2ff;
       letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(5, 5, 12, 0.75);
+      border: 1px solid currentColor;
+      backdrop-filter: blur(4px);
     }
 
-    .hud-tag-pink {
-      background: rgba(247, 37, 133, 0.25);
-      border-color: #f72585;
-      color: #f72585;
-      align-self: flex-end;
-    }
+    .badge-tag.cyan { color: var(--cyan); }
+    .badge-tag.pink { color: var(--pink); }
 
-    .hud-vector-route {
-      display: flex;
+    .card-meta {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.7rem;
+      color: #fff;
+      background: rgba(13, 9, 31, 0.85);
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: #00d2ff;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-shadow: 0 0 10px #00d2ff;
-    }
-
-    .hud-holo-visor {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 75%;
-      height: 60%;
-      border: 1px dashed rgba(0, 210, 255, 0.7);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 210, 255, 0.12);
-      backdrop-filter: blur(1px);
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.35);
-    }
-
-    .hud-holo-visor svg {
-      filter: drop-shadow(0 0 8px #f72585);
     }
 
     .card-info {
-      padding: 12px 14px;
+      padding: 14px 16px;
     }
 
     .card-info h3 {
-      font-size: 0.95rem;
-      color: #fff;
-      margin-bottom: 4px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #ffffff;
+      letter-spacing: 0.3px;
     }
 
     .card-info p {
       font-size: 0.78rem;
-      color: #00d2ff;
-      font-weight: 600;
+      color: #94a3b8;
+      line-height: 1.4;
     }
 
-    .coluna-direita .card-info p {
-      color: #f72585;
-    }
-
-    /* CÍRCULO CENTRAL ANIMADO */
-    .circulo-central-wrapper {
-      position: relative;
-      width: 380px;
-      height: 380px;
+    /* Círculo Central Pulsante */
+    .center-sphere-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 8;
     }
 
-    .anel-exterior {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 3px dashed #f72585;
-      animation: girarHorario 14s linear infinite;
-      box-shadow: 0 0 35px rgba(247, 37, 133, 0.4);
-    }
-
-    .anel-meio {
-      position: absolute;
-      inset: 22px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: #00d2ff;
-      border-bottom-color: #7b2cbf;
-      animation: girarAntiHorario 8s linear infinite;
-    }
-
-    .anel-pulsante {
-      position: absolute;
-      inset: 44px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(123, 44, 191, 0.35) 0%, rgba(7, 7, 16, 0.9) 70%);
-      border: 1px solid rgba(0, 210, 255, 0.4);
-      animation: pulsoCentral 2.4s ease-in-out infinite alternate;
-      box-shadow: inset 0 0 30px rgba(0, 210, 255, 0.3);
-    }
-
-    @keyframes girarHorario {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes girarAntiHorario {
-      0% { transform: rotate(360deg); }
-      100% { transform: rotate(0deg); }
-    }
-    @keyframes pulsoCentral {
-      0% { transform: scale(0.96); box-shadow: 0 0 20px rgba(123, 44, 191, 0.4); }
-      100% { transform: scale(1.04); box-shadow: 0 0 45px rgba(0, 210, 255, 0.7); }
-    }
-
-    .conteudo-circulo {
+    .circle-radar {
       position: relative;
-      z-index: 10;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      padding: 30px;
-      max-width: 280px;
+      padding: 24px;
     }
 
-    .conteudo-circulo .badge-vr {
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      color: #00d2ff;
-      text-transform: uppercase;
+    /* Anéis giratórios do círculo */
+    .circle-radar::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px dashed var(--cyan);
+      animation: spinClockwise 14s linear infinite;
+    }
+
+    .circle-radar::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      border: 2px solid var(--pink);
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+      animation: spinCounter 10s linear infinite;
+    }
+
+    @keyframes spinClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinCounter {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .circle-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 0, 255, 0.25) 0%, rgba(5, 5, 12, 0.95) 75%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-shadow: inset 0 0 35px rgba(0, 240, 255, 0.3);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      z-index: 2;
+    }
+
+    .circle-category {
+      font-size: 0.65rem;
       font-weight: 800;
-      display: block;
-      margin-bottom: 6px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
-    .conteudo-circulo h2 {
-      font-size: 1.55rem;
+    .circle-title {
+      font-size: 1.15rem;
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.25;
       margin-bottom: 10px;
-      background: linear-gradient(135deg, #ffffff, #f72585, #00d2ff);
+      background: linear-gradient(135deg, #fff 10%, var(--pink) 70%, var(--purple) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .conteudo-circulo p {
-      font-size: 0.82rem;
-      color: #d1d5db;
+    .circle-desc {
+      font-size: 0.72rem;
+      color: #cbd5e1;
       line-height: 1.45;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1040px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .center-sphere-wrapper {
+        order: -1;
+      }
+      .col-right-title {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="moldura-cyber">
-    <div class="viewport">
-
-      <a href="index.html" class="btn-voltar">
-        ← Voltar ao Holograma 360°
-      </a>
-
-      <!-- LATERAL ESQUERDA: GPS E ROTA -->
-      <div class="coluna-modelos">
-        <span class="coluna-titulo">🛰️ Telemetria & Rota GPS</span>
-
-        <!-- Card 1: GPS em Pista / Rota Noturna -->
-        <div class="card-capacete">
-          <div class="card-media">
-            <img src="https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&w=600&q=80" alt="Traçado de Rota GPS em Rodovia" />
-            <div class="overlay-hud">
-              <span class="hud-tag-mini">GPS ROUTE ACTIVE</span>
-              <div class="hud-vector-route">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                <span>Curva à Direita // 250m</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-info">
-            <h3>Traçado de Rota em Tempo Real</h3>
-            <p>Projeção vetorial de curvas e velocidade ideal</p>
-          </div>
-        </div>
-
-        <!-- Card 2: Mapa Satélite / Navegação 3D -->
-        <div class="card-capacete">
-          <div class="card-media">
-            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Navegação Holográfica GPS" />
-            <div class="overlay-hud">
-              <span class="hud-tag-mini">MAP LIDAR // 360°</span>
-              <div class="hud-vector-route">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V8"/></svg>
-                <span>Destino: 4.8 km // Radar OK</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-info">
-            <h3>Mapeamento Satélite com Alerta</h3>
-            <p>Identificação de radares e pontos cegos</p>
-          </div>
-        </div>
+  <div class="main-frame">
+    <div class="stage-content">
+      
+      <!-- Topo -->
+      <div class="top-nav">
+        <a href="index.html" class="btn-voltar">← VOLTAR AO HOLOGRAMA 360°</a>
+        <span class="nav-label">SISTEMA AR // VISÃO INTEGRAL</span>
       </div>
 
-      <!-- CÍRCULO CENTRAL ANIMADO -->
-      <div class="circulo-central-wrapper">
-        <div class="anel-exterior"></div>
-        <div class="anel-meio"></div>
-        <div class="anel-pulsante"></div>
+      <!-- Dashboard principal com 4 fotos clicáveis -->
+      <div class="dashboard-grid">
+        
+        <!-- COLUNA ESQUERDA: TELEMETRIA & GPS -->
+        <div class="column">
+          <div class="col-title col-left-title">
+            <span>📡 TELEMETRIA & ROTA GPS</span>
+          </div>
 
-        <div class="conteudo-circulo">
-          <span class="badge-vr">Realidade Aumentada</span>
-          <h2>Por que não uma Nova Era da Condução?</h2>
-          <p>A tecnologia projeta informações digitais, como setas do GPS e velocidade, por cima do que você já vê no mundo real.</p>
+          <!-- CARD 1 -> rota.html -->
+          <a href="rota.html" class="photo-card" title="Clique para abrir detalhes">
+            <div class="card-thumb">
+              <span class="badge-tag cyan">GPS ROUTE ACTIVE</span>
+              <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80" alt="Traçado de Rota" />
+              <div class="card-meta">⮑ Curva à Direita // 250m</div>
+            </div>
+            <div class="card-info">
+              <h3>Traçado de Rota em Tempo Real</h3>
+              <p>Projeção vetorial de curvas e velocidade ideal calculada por IA.</p>
+            </div>
+          </a>
+
+          <!-- CARD 2 -> satelite.html -->
+          <a href="satelite.html" class="photo-card" title="Clique para abrir detalhes">
+            <div class="card-thumb">
+              <span class="badge-tag cyan">MAP LIDAR & SAT</span>
+              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80" alt="Mapeamento Satélite" />
+              <div class="card-meta">↑ Destino: 4.8 km // Radar OK</div>
+            </div>
+            <div class="card-info">
+              <h3>Mapeamento Satélite com Alerta</h3>
+              <p>Identificação de radares, pontos cegos e condições meteorológicas.</p>
+            </div>
+          </a>
         </div>
-      </div>
 
-      <!-- LATERAL DIREITA: LENTE DE CAPACETE COM GPS EM HOLOGRAMA -->
-      <div class="coluna-modelos coluna-direita">
-        <span class="coluna-titulo">Viseira Holográfica AR ⚡</span>
-
-        <!-- Card 1: Visor Holográfico com Seta GPS AR -->
-        <div class="card-capacete">
-          <div class="card-media">
-            <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80" alt="Viseira do Capacete com GPS Holográfico" />
-            <div class="overlay-hud">
-              <span class="hud-tag-mini hud-tag-pink">HUD VISOR AR</span>
-              <div class="hud-holo-visor">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f72585" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
-                <span style="font-size: 0.65rem; color: #00d2ff; font-weight: 800; margin-top: 2px;">88 KM/H • GPS AR</span>
-              </div>
+        <!-- CÍRCULO CENTRAL ANIMADO -->
+        <div class="center-sphere-wrapper">
+          <div class="circle-radar">
+            <div class="circle-inner">
+              <span class="circle-category">REALIDADE AUMENTADA</span>
+              <h2 class="circle-title">Por que não uma Nova Era da Condução?</h2>
+              <p class="circle-desc">
+                A tecnologia projeta informações digitais, como setas do GPS e velocidade, por cima do que você já vê no mundo real.
+              </p>
             </div>
           </div>
-          <div class="card-info">
-            <h3>HUD na Viseira: Seta Espacial</h3>
-            <p>Guia holográfico flutuando sobre o asfalto</p>
-          </div>
         </div>
 
-        <!-- Card 2: Lente Óptica com Retícula e Telemetria de Trajeto -->
-        <div class="card-capacete">
-          <div class="card-media">
-            <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80" alt="Lente Óptica do Capacete com Telemetria" />
-            <div class="overlay-hud">
-              <span class="hud-tag-mini hud-tag-pink">OPTICAL LENS VR</span>
-              <div class="hud-holo-visor">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
-                <span style="font-size: 0.65rem; color: #f72585; font-weight: 800; margin-top: 2px;">WAYPOINT LOCKED</span>
-              </div>
+        <!-- COLUNA DIREITA: VISEIRA HOLOGRÁFICA -->
+        <div class="column">
+          <div class="col-title col-right-title">
+            <span>VISEIRA HOLOGRÁFICA AR ⚡</span>
+          </div>
+
+          <!-- CARD 3 -> hud-seta.html -->
+          <a href="hud-seta.html" class="photo-card" title="Clique para abrir detalhes">
+            <div class="card-thumb">
+              <span class="badge-tag pink">HUD VISOR AR</span>
+              <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" alt="HUD na Viseira" />
+              <div class="card-meta">↗ 88 KM/H • GPS AR</div>
             </div>
-          </div>
-          <div class="card-info">
-            <h3>Lente com Retícula de Telemetria</h3>
-            <p>Camada óptica com dados de navegação direta</p>
-          </div>
+            <div class="card-info">
+              <h3>HUD na Viseira: Seta Espacial</h3>
+              <p>Guia holográfico flutuando sobre o asfalto com perspectiva dinâmica.</p>
+            </div>
+          </a>
+
+          <!-- CARD 4 -> reticula.html -->
+          <a href="reticula.html" class="photo-card" title="Clique para abrir detalhes">
+            <div class="card-thumb">
+              <span class="badge-tag pink">OPTICAL LENS VR</span>
+              <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80" alt="Lente com Retícula" />
+              <div class="card-meta">⊕ WAYPOINT LOCKED</div>
+            </div>
+            <div class="card-info">
+              <h3>Lente com Retícula de Telemetria</h3>
+              <p>Camada óptica com dados de navegação direta e foco adaptativo.</p>
+            </div>
+          </a>
         </div>
+
       </div>
 
     </div>
