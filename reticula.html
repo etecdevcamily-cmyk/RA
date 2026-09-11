@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shoei GT-Air 3 Smart // Head-Up Display de Série</title>
+  <title>Lente Óptica // Viseira com Retícula AR</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -101,8 +101,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: contrast(1.05) brightness(0.95);
-      transition: opacity 0.3s;
+      filter: contrast(1.1) brightness(0.9);
     }
     .badge-overlay {
       position: absolute;
@@ -118,6 +117,49 @@
       letter-spacing: 1px;
       backdrop-filter: blur(6px);
       z-index: 2;
+    }
+    /* Mira holográfica sobre a lente */
+    .hud-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      border: 1px dashed rgba(0, 240, 255, 0.6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+      animation: pulseReticle 3s infinite ease-in-out;
+      z-index: 2;
+    }
+    .hud-reticle::before {
+      content: '';
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      border: 1px solid var(--pink);
+      border-radius: 50%;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    }
+    .hud-reticle-text {
+      background: rgba(5, 5, 12, 0.85);
+      border: 1px solid var(--pink);
+      color: #ff77b7;
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+    }
+    @keyframes pulseReticle {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+      50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.7; }
     }
     .hud-crosshair {
       position: absolute;
@@ -164,43 +206,39 @@
     <div class="inner-content">
       <a href="modelos.html" class="btn-voltar">← VOLTAR PARA MODELOS</a>
       
-      <!-- Contêiner da Foto com proteções antibloqueio -->
+      <!-- Imagem focada na Lente/Viseira do Capacete -->
       <div class="image-box">
-        <span class="badge-overlay">SHOEI × EYELIGHTS // EICMA MILÃO</span>
+        <span class="badge-overlay">OPTICAL LENS VR // HUD</span>
         
         <img 
-          id="fotoCapacete"
-          src="shoei.jpg"
-          referrerpolicy="no-referrer"
-          alt="Capacete Shoei GT-Air 3 Smart com HUD em Milão"
+          id="fotoLente"
+          src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80" 
+          alt="Lente e Viseira de Capacete com HUD"
+          loading="eager"
         />
 
-        <div class="hud-crosshair">⊕ NANO-OLED HEAD-UP DISPLAY DE SÉRIE</div>
+        <!-- Retícula Holográfica sobre a lente -->
+        <div class="hud-reticle">
+          <span class="hud-reticle-text">⊕ FOCUS LOCKED</span>
+        </div>
+
+        <div class="hud-crosshair">CAMADA POLICARBONATO AR COATING</div>
       </div>
 
       <!-- Texto explicativo centralizado -->
-      <span class="tag-category">Inovação Apresentada em Milão</span>
-      <h1>Primeiro Capacete com HUD de Série</h1>
+      <span class="tag-category">Micro-Projetores MicroLED</span>
+      <h1>Lente com Retícula de Telemetria</h1>
       <p>
-        Apresentado no tradicional Salão de Milão (EICMA), o <strong>Shoei GT-Air 3 Smart</strong> foi desenvolvido em parceria com a especialista francesa EyeLights. Ele marca a chegada do primeiro capacete de produção em série com tecnologia Head-Up Display (HUD) totalmente integrada de fábrica, projetando velocidade, alertas de radar e rotas diretamente na linha de visão do motociclista sem adaptações externas.
+        Camada eletrocrômica de alta densidade incorporada ao policarbonato da viseira. A lente funciona como um prisma transparente onde microprojetores ópticos desenham a retícula com foco no infinito, permitindo que o motociclista leia informações de velocidade, distância do veículo à frente e miras de navegação sem perder o foco na pista.
       </p>
     </div>
   </div>
 
   <script>
-    // Gerenciador de carregamento: se não achar a foto local 'shoei.jpg', tenta URLs diretas sem bloqueio
-    const img = document.getElementById('fotoCapacete');
-    const fontesDeBackup = [
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1200&q=80"
-    ];
-    let tentativa = 0;
-
+    // Garantia de fallback caso a conexão local falhe
+    const img = document.getElementById('fotoLente');
     img.onerror = function() {
-      if (tentativa < fontesDeBackup.length) {
-        img.src = fontesDeBackup[tentativa];
-        tentativa++;
-      }
+      this.src = 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1200&q=80';
     };
   </script>
 </body>
