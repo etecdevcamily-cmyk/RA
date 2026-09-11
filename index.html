@@ -86,7 +86,6 @@
       overflow: hidden;
     }
 
-    /* Container do palco */
     .stage {
       display: flex;
       align-items: center;
@@ -96,7 +95,7 @@
       position: relative;
     }
 
-    /* ÁREA DO CAPACETE */
+    /* ÁREA DO CAPACETE COM IMAGEM REAL */
     .capacete-area {
       position: relative;
       width: 440px;
@@ -108,88 +107,179 @@
       align-items: center;
     }
 
-    /* Anel holográfico de escaneamento de montagem */
+    /* Anéis de laser e mira de escaneamento em rotação */
     .laser-scanner {
       position: absolute;
-      width: 430px;
-      height: 430px;
+      width: 420px;
+      height: 420px;
       border-radius: 50%;
-      border: 2px dashed rgba(0, 210, 255, 0.4);
+      border: 2px dashed rgba(0, 210, 255, 0.45);
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
       animation: spinScanner 12s linear infinite;
+    }
+
+    .laser-scanner-interno {
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      border: 1px solid rgba(247, 37, 133, 0.35);
+      animation: spinScannerReverso 8s linear infinite;
     }
 
     @keyframes spinScanner {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    @keyframes spinScannerReverso {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
 
-    /* SVG do capacete animado */
-    .capacete-svg {
+    /* Container de montagem do capacete real */
+    .capacete-real-wrapper {
+      position: relative;
+      width: 340px;
+      height: 340px;
+      border-radius: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.85));
+    }
+
+    /* 1. Imagem real com animação de montagem / materialização */
+    .capacete-real-img {
       width: 100%;
       height: 100%;
-      overflow: visible;
-      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.8));
-    }
-
-    /* Camada 1: Estrutura / Wireframe */
-    .camada-wireframe {
-      stroke-dasharray: 600;
-      stroke-dashoffset: 600;
-      animation: desenharWireframe 1.4s ease-out forwards;
-    }
-
-    /* Camada 2: Casco negro aero */
-    .camada-casco {
+      object-fit: cover;
+      border-radius: 20px;
       opacity: 0;
-      transform-origin: center;
-      transform: scale(0.6) rotate(-10deg);
-      animation: entrarCasco 1.2s 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      transform: scale(0.7) rotate(-8deg);
+      filter: brightness(0.2) contrast(1.4) saturate(1.2);
+      animation: montarCapaceteReal 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation-delay: 0.5s;
     }
 
-    /* Camada 3: Camuflagem Neon (spots rosa e roxo) */
-    .camada-camo {
+    @keyframes montarCapaceteReal {
+      0% {
+        opacity: 0;
+        transform: scale(0.65) rotate(-10deg);
+        filter: brightness(2) drop-shadow(0 0 25px #00d2ff);
+        clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+      }
+      50% {
+        opacity: 0.85;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        filter: brightness(1.5) drop-shadow(0 0 35px #f72585);
+      }
+      80% {
+        transform: scale(1.04) rotate(1deg);
+        filter: brightness(1.2) drop-shadow(0 0 20px #00d2ff);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: brightness(1) contrast(1.05) saturate(1.1);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    }
+
+    /* 2. Feixe de laser holográfico que varre o capacete na montagem */
+    .laser-beam {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #00d2ff, #f72585, transparent);
+      box-shadow: 0 0 20px #00d2ff, 0 0 30px #f72585;
       opacity: 0;
-      transform: translateY(-40px) scale(0.85);
-      animation: entrarCamo 0.9s 2.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: varrerLaser 2.4s ease-in-out forwards;
+      animation-delay: 0.6s;
     }
 
-    /* Camada 4: Visor HUD AR e retícula */
-    .camada-visor {
+    @keyframes varrerLaser {
+      0% { top: 0%; opacity: 1; }
+      50% { top: 96%; opacity: 1; }
+      75% { top: 20%; opacity: 0.8; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* 3. Retícula e HUD em Realidade Aumentada sobre o visor */
+    .hud-ar-visor {
+      position: absolute;
+      top: 38%;
+      left: 22%;
+      width: 140px;
+      height: 80px;
+      border: 1.5px solid rgba(0, 210, 255, 0.7);
+      border-radius: 12px;
+      background: rgba(0, 210, 255, 0.12);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
       opacity: 0;
-      transform: translateY(-80px) rotate(15deg);
-      animation: encaixarVisor 1s 3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      animation: ligarHud 0.8s ease forwards, pulsarHud 2.5s infinite alternate;
+      animation-delay: 3.2s;
     }
 
-    /* Camada 5: Elementos holográficos do visor piscando */
-    .camada-hud {
-      opacity: 0;
-      animation: ligarHud 0.6s 3.9s forwards, pulsarHud 2s 4.5s infinite alternate;
+    .mira-centro {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border: 1px dashed #00d2ff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    @keyframes desenharWireframe {
-      to { stroke-dashoffset: 0; }
+    .mira-centro::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: #00d2ff;
     }
-    @keyframes entrarCasco {
-      to { opacity: 1; transform: scale(1) rotate(0deg); }
+
+    .mira-centro::after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 1px;
+      background: #00d2ff;
     }
-    @keyframes entrarCamo {
-      to { opacity: 1; transform: translateY(0) scale(1); }
+
+    .hud-tag {
+      font-size: 8px;
+      font-weight: 800;
+      color: #f72585;
+      letter-spacing: 1px;
+      margin-top: 4px;
     }
-    @keyframes encaixarVisor {
-      to { opacity: 1; transform: translateY(0) rotate(0deg); }
+
+    .hud-telemetria {
+      font-size: 7px;
+      font-weight: 700;
+      color: #00d2ff;
     }
+
     @keyframes ligarHud {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      70% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
-    @keyframes pulsarHud {
-      0% { filter: drop-shadow(0 0 4px #00d2ff); }
-      100% { filter: drop-shadow(0 0 16px #00d2ff); }
+      0% { opacity: 0; transform: scale(0.5); }
+      60% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
-    /* PAINEL DE TEXTO QUE SAI DE TRÁS DO CAPACETE */
+    @keyframes pulsarHud {
+      0% { box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); }
+      100% { box-shadow: 0 0 30px rgba(247, 37, 133, 0.6); }
+    }
+
+    /* PAINEL DE TEXTO LATERAL (desliza de trás do capacete) */
     .painel-texto {
       position: relative;
       margin-left: 40px;
@@ -201,7 +291,7 @@
       pointer-events: none;
     }
 
-    /* Ativado após a montagem completa (aos ~4.4 segundos) */
+    /* Ativado após a montagem completa da foto real */
     .painel-texto.revelado {
       opacity: 1;
       transform: translateX(0) scale(1);
@@ -301,72 +391,29 @@
     <div class="viewport">
       <div class="stage">
 
-        <!-- CAPACETE SENDO MONTADO -->
+        <!-- CAPACETE COM IMAGEM REAL & ANIMAÇÃO DE MATERIALIZAÇÃO -->
         <div class="capacete-area">
           <div class="laser-scanner"></div>
+          <div class="laser-scanner-interno"></div>
 
-          <svg class="capacete-svg" viewBox="0 0 500 500">
-            <defs>
-              <linearGradient id="gradVisor" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00d2ff" stop-opacity="0.35" />
-                <stop offset="100%" stop-color="#7b2cbf" stop-opacity="0.2" />
-              </linearGradient>
-              <linearGradient id="gradAero" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1e182f" />
-                <stop offset="100%" stop-color="#0b0914" />
-              </linearGradient>
-            </defs>
+          <div class="capacete-real-wrapper">
+            <!-- Imagem real de alta definição -->
+            <img 
+              src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80" 
+              alt="Capacete Real Norisk Razor VR" 
+              class="capacete-real-img"
+            />
 
-            <!-- 1. Wireframe / Blueprint inicial -->
-            <path class="camada-wireframe" 
-              d="M 120 280 C 100 160, 210 70, 360 90 C 440 100, 470 210, 440 320 C 410 390, 310 430, 220 420 C 160 410, 110 350, 120 280 Z"
-              fill="none" stroke="#00d2ff" stroke-width="2" stroke-dasharray="8 6" />
+            <!-- Feixe de laser de montagem -->
+            <div class="laser-beam"></div>
 
-            <!-- 2. Casco Sólido Aerodinâmico -->
-            <g class="camada-casco">
-              <!-- Casco principal -->
-              <path d="M 130 270 C 110 160, 210 80, 350 95 C 430 105, 465 210, 435 320 C 405 385, 310 420, 225 410 C 165 400, 120 340, 130 270 Z"
-                fill="url(#gradAero)" stroke="#2d1b4e" stroke-width="3" />
-              <!-- Quexeira e difusor inferior -->
-              <path d="M 130 270 L 190 380 L 240 405 L 170 320 Z" fill="#140f24" />
-              <line x1="190" y1="380" x2="230" y2="400" stroke="#f72585" stroke-width="4" stroke-linecap="round" />
-            </g>
-
-            <!-- 3. Camuflagem Neon Cyberpunk (spots da foto) -->
-            <g class="camada-camo">
-              <ellipse cx="230" cy="130" rx="22" ry="32" fill="#f72585" transform="rotate(30 230 130)" />
-              <ellipse cx="280" cy="120" rx="18" ry="26" fill="#7b2cbf" transform="rotate(-15 280 120)" />
-              <ellipse cx="320" cy="140" rx="26" ry="36" fill="#f72585" transform="rotate(20 320 140)" />
-              <ellipse cx="365" cy="170" rx="20" ry="30" fill="#7b2cbf" transform="rotate(45 365 170)" />
-              <ellipse cx="385" cy="225" rx="25" ry="38" fill="#f72585" transform="rotate(10 385 225)" />
-              <ellipse cx="400" cy="300" rx="24" ry="34" fill="#7b2cbf" transform="rotate(-25 400 300)" />
-              <ellipse cx="320" cy="380" rx="28" ry="36" fill="#7b2cbf" transform="rotate(55 320 380)" />
-              <ellipse cx="270" cy="390" rx="22" ry="30" fill="#f72585" transform="rotate(-30 270 390)" />
-
-              <!-- Câmera AR ótica -->
-              <rect x="330" y="240" width="38" height="38" rx="10" fill="#120c22" stroke="#f72585" stroke-width="3" />
-              <circle cx="349" cy="259" r="9" fill="#00d2ff" />
-
-              <!-- Tipografia Norisk -->
-              <text x="350" y="320" fill="#ffffff" font-size="20" font-weight="900" letter-spacing="4" transform="rotate(-40 350 320)">NORISK</text>
-            </g>
-
-            <!-- 4. Visor AR Holográfico com Retícula -->
-            <g class="camada-visor">
-              <path d="M 125 240 C 130 190, 220 170, 310 185 C 335 190, 345 280, 320 305 C 235 315, 145 310, 125 240 Z"
-                fill="url(#gradVisor)" stroke="#00d2ff" stroke-width="4" />
-            </g>
-
-            <!-- 5. HUD Telemetria no Visor -->
-            <g class="camada-hud">
-              <!-- Retícula mira -->
-              <circle cx="230" cy="245" r="28" fill="none" stroke="#00d2ff" stroke-width="1.5" stroke-dasharray="4 3" />
-              <line x1="230" y1="210" x2="230" y2="280" stroke="#00d2ff" stroke-width="1.5" />
-              <line x1="195" y1="245" x2="265" y2="245" stroke="#00d2ff" stroke-width="1.5" />
-              <text x="210" y="200" fill="#f72585" font-size="10" font-weight="800" letter-spacing="1">VR ACTIVE</text>
-              <text x="195" y="295" fill="#00d2ff" font-size="9" font-weight="700">120 FPS // HUD 360°</text>
-            </g>
-          </svg>
+            <!-- Visor HUD AR Holográfico com Telemetria -->
+            <div class="hud-ar-visor">
+              <div class="mira-centro"></div>
+              <span class="hud-tag">VR ACTIVE</span>
+              <span class="hud-telemetria">120 FPS // HUD 360°</span>
+            </div>
+          </div>
         </div>
 
         <!-- PAINEL DE TEXTO LATERAL (desliza de trás do capacete) -->
@@ -403,11 +450,11 @@
   </div>
 
   <script>
-    // Ativa a saída do texto após o capacete completar sua montagem
+    // Ativa o deslizamento do texto após o capacete real terminar de ser materializado
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         document.getElementById('painelTexto').classList.add('revelado');
-      }, 4200);
+      }, 3400);
     });
   </script>
 </body>
