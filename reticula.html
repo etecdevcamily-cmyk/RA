@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lente Óptica // Viseira com Retícula AR</title>
+  <title>Lente com Retícula // Telemetria Óptica</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -32,15 +32,11 @@
       background-size: 40px 40px;
       pointer-events: none;
     }
-    @property --angle {
-      syntax: '<angle>';
-      initial-value: 0deg;
-      inherits: false;
-    }
+    @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
     @keyframes rotateBorder { to { --angle: 360deg; } }
     .card-frame {
       width: 100%;
-      max-width: 780px;
+      max-width: 800px;
       border-radius: 24px;
       padding: 3px;
       background: conic-gradient(from var(--angle, 0deg), var(--cyan), var(--pink), var(--purple), var(--cyan));
@@ -50,7 +46,7 @@
       z-index: 1;
     }
     .inner-content {
-      background: rgba(10, 8, 20, 0.94);
+      background: rgba(10, 8, 20, 0.95);
       border-radius: 22px;
       padding: 36px 32px;
       display: flex;
@@ -83,25 +79,21 @@
     }
     .image-box {
       width: 100%;
-      max-width: 600px;
-      height: 290px;
+      max-width: 620px;
+      height: 300px;
       border-radius: 16px;
       overflow: hidden;
       position: relative;
-      border: 1px solid rgba(139, 0, 255, 0.4);
-      box-shadow: 0 0 25px rgba(139, 0, 255, 0.25);
+      border: 1px solid rgba(139, 0, 255, 0.45);
+      box-shadow: 0 0 30px rgba(139, 0, 255, 0.25);
       margin-bottom: 28px;
-      background: #090915;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #000;
     }
     .image-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
-      filter: contrast(1.1) brightness(0.9);
+      filter: contrast(1.15) brightness(0.95);
     }
     .badge-overlay {
       position: absolute;
@@ -116,65 +108,37 @@
       border-radius: 6px;
       letter-spacing: 1px;
       backdrop-filter: blur(6px);
-      z-index: 2;
     }
-    /* Mira holográfica sobre a lente */
-    .hud-reticle {
+    /* Retícula de mira sobre a lente */
+    .reticle-hud {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 150px;
-      height: 150px;
-      border: 1px dashed rgba(0, 240, 255, 0.6);
+      width: 140px;
+      height: 140px;
+      border: 2px dashed var(--pink);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
       pointer-events: none;
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
-      animation: pulseReticle 3s infinite ease-in-out;
-      z-index: 2;
+      animation: pulseCrosshair 3s infinite ease-in-out;
     }
-    .hud-reticle::before {
-      content: '';
-      position: absolute;
-      width: 80%;
-      height: 80%;
-      border: 1px solid var(--pink);
-      border-radius: 50%;
-      border-left-color: transparent;
-      border-right-color: transparent;
+    @keyframes pulseCrosshair {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.06); }
     }
-    .hud-reticle-text {
+    .reticle-center {
       background: rgba(5, 5, 12, 0.85);
-      border: 1px solid var(--pink);
-      color: #ff77b7;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
       font-weight: 800;
       font-size: 0.72rem;
       letter-spacing: 1.5px;
       padding: 4px 10px;
       border-radius: 6px;
-      box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
-    }
-    @keyframes pulseReticle {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
-      50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.7; }
-    }
-    .hud-crosshair {
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      padding: 6px 14px;
-      border: 1px solid var(--pink);
-      border-radius: 8px;
-      background: rgba(5, 5, 12, 0.85);
-      color: #ff77b7;
-      font-weight: 800;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      backdrop-filter: blur(6px);
-      z-index: 2;
     }
     .tag-category {
       font-size: 0.75rem;
@@ -185,7 +149,7 @@
       margin-bottom: 8px;
     }
     h1 {
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 900;
       background: linear-gradient(135deg, #ffffff, var(--pink), var(--cyan));
       -webkit-background-clip: text;
@@ -196,8 +160,7 @@
       color: #cbd5e1;
       font-size: 1.05rem;
       line-height: 1.7;
-      max-width: 620px;
-      margin-bottom: 24px;
+      max-width: 640px;
     }
   </style>
 </head>
@@ -206,26 +169,17 @@
     <div class="inner-content">
       <a href="modelos.html" class="btn-voltar">← VOLTAR PARA MODELOS</a>
       
-      <!-- Imagem focada na Lente/Viseira do Capacete -->
       <div class="image-box">
-        <span class="badge-overlay">OPTICAL LENS VR // HUD</span>
+        <span class="badge-overlay">OPTICAL LENS VR // MICRO-LED</span>
         
-        <img 
-          id="fotoLente"
-          src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80" 
-          alt="Lente e Viseira de Capacete com HUD"
-          loading="eager"
-        />
+        <!-- Foto de primeiro plano na lente/viseira do capacete -->
+        <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1200&q=80" alt="Lente e Viseira de Capacete de Moto" />
 
-        <!-- Retícula Holográfica sobre a lente -->
-        <div class="hud-reticle">
-          <span class="hud-reticle-text">⊕ FOCUS LOCKED</span>
+        <div class="reticle-hud">
+          <span class="reticle-center">⊕ RETÍCULA ATIVA</span>
         </div>
-
-        <div class="hud-crosshair">CAMADA POLICARBONATO AR COATING</div>
       </div>
 
-      <!-- Texto explicativo centralizado -->
       <span class="tag-category">Micro-Projetores MicroLED</span>
       <h1>Lente com Retícula de Telemetria</h1>
       <p>
@@ -233,13 +187,5 @@
       </p>
     </div>
   </div>
-
-  <script>
-    // Garantia de fallback caso a conexão local falhe
-    const img = document.getElementById('fotoLente');
-    img.onerror = function() {
-      this.src = 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1200&q=80';
-    };
-  </script>
 </body>
 </html>
