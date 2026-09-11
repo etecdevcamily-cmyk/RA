@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Norisk Razor VR - AR Smart Helmet</title>
+  <title>Norisk Razor VR - Simulador 360°</title>
   <style>
     * {
       box-sizing: border-box;
@@ -27,7 +27,7 @@
       padding: 24px;
     }
 
-    /* Moldura externa com feixe giratório em degradê neon */
+    /* Moldura externa com feixe neon giratório */
     .moldura-cyber {
       position: relative;
       width: 100%;
@@ -89,213 +89,125 @@
     .stage {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       width: 100%;
       height: 100%;
       position: relative;
+      gap: 40px;
     }
 
-    /* ÁREA DO CAPACETE COM IMAGEM REAL */
-    .capacete-area {
+    /* PALCO 3D INTERATIVO */
+    .viewer-360-container {
       position: relative;
       width: 440px;
       height: 440px;
       flex-shrink: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Anéis de laser e mira de escaneamento em rotação */
-    .laser-scanner {
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      border: 2px dashed rgba(0, 210, 255, 0.45);
-      box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
-      animation: spinScanner 12s linear infinite;
-    }
-
-    .laser-scanner-interno {
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      border-radius: 50%;
-      border: 1px solid rgba(247, 37, 133, 0.35);
-      animation: spinScannerReverso 8s linear infinite;
-    }
-
-    @keyframes spinScanner {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes spinScannerReverso {
-      0% { transform: rotate(360deg); }
-      100% { transform: rotate(0deg); }
-    }
-
-    /* Container de montagem do capacete real */
-    .capacete-real-wrapper {
-      position: relative;
-      width: 340px;
-      height: 340px;
-      border-radius: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.85));
-    }
-
-    /* 1. Imagem real com animação de montagem / materialização */
-    .capacete-real-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 20px;
-      opacity: 0;
-      transform: scale(0.7) rotate(-8deg);
-      filter: brightness(0.2) contrast(1.4) saturate(1.2);
-      animation: montarCapaceteReal 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-      animation-delay: 0.5s;
-    }
-
-    @keyframes montarCapaceteReal {
-      0% {
-        opacity: 0;
-        transform: scale(0.65) rotate(-10deg);
-        filter: brightness(2) drop-shadow(0 0 25px #00d2ff);
-        clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
-      }
-      50% {
-        opacity: 0.85;
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        filter: brightness(1.5) drop-shadow(0 0 35px #f72585);
-      }
-      80% {
-        transform: scale(1.04) rotate(1deg);
-        filter: brightness(1.2) drop-shadow(0 0 20px #00d2ff);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-        filter: brightness(1) contrast(1.05) saturate(1.1);
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-      }
-    }
-
-    /* 2. Feixe de laser holográfico que varre o capacete na montagem */
-    .laser-beam {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, #00d2ff, #f72585, transparent);
-      box-shadow: 0 0 20px #00d2ff, 0 0 30px #f72585;
-      opacity: 0;
-      animation: varrerLaser 2.4s ease-in-out forwards;
-      animation-delay: 0.6s;
-    }
-
-    @keyframes varrerLaser {
-      0% { top: 0%; opacity: 1; }
-      50% { top: 96%; opacity: 1; }
-      75% { top: 20%; opacity: 0.8; }
-      100% { top: 100%; opacity: 0; }
-    }
-
-    /* 3. Retícula e HUD em Realidade Aumentada sobre o visor */
-    .hud-ar-visor {
-      position: absolute;
-      top: 38%;
-      left: 22%;
-      width: 140px;
-      height: 80px;
-      border: 1.5px solid rgba(0, 210, 255, 0.7);
-      border-radius: 12px;
-      background: rgba(0, 210, 255, 0.12);
-      backdrop-filter: blur(2px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
-      opacity: 0;
-      animation: ligarHud 0.8s ease forwards, pulsarHud 2.5s infinite alternate;
-      animation-delay: 3.2s;
+      perspective: 1200px;
+      user-select: none;
     }
 
-    .mira-centro {
-      position: relative;
-      width: 32px;
-      height: 32px;
-      border: 1px dashed #00d2ff;
+    /* Anel holográfico de base */
+    .hologram-base {
+      position: absolute;
+      bottom: 25px;
+      width: 320px;
+      height: 80px;
       border-radius: 50%;
+      border: 2px dashed rgba(0, 210, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 210, 255, 0.3), inset 0 0 20px rgba(247, 37, 133, 0.3);
+      transform: rotateX(75deg);
+      pointer-events: none;
+      animation: girarBase 12s linear infinite;
+    }
+
+    @keyframes girarBase {
+      0% { transform: rotateX(75deg) rotate(0deg); }
+      100% { transform: rotateX(75deg) rotate(360deg); }
+    }
+
+    /* Card 3D giratório controlado por arraste */
+    .card-3d-capacete {
+      position: relative;
+      width: 340px;
+      height: 340px;
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: grab;
+      transform-style: preserve-3d;
+      transition: transform 0.08s ease-out;
     }
 
-    .mira-centro::before {
-      content: '';
-      position: absolute;
+    .card-3d-capacete:active {
+      cursor: grabbing;
+    }
+
+    /* Imagem fotográfica com iluminação integrada */
+    .card-3d-capacete img {
       width: 100%;
-      height: 1px;
-      background: #00d2ff;
-    }
-
-    .mira-centro::after {
-      content: '';
-      position: absolute;
       height: 100%;
-      width: 1px;
-      background: #00d2ff;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 25px rgba(247, 37, 133, 0.35));
     }
 
-    .hud-tag {
-      font-size: 8px;
-      font-weight: 800;
-      color: #f72585;
-      letter-spacing: 1px;
-      margin-top: 4px;
+    /* Indicador de ângulo e dica de arraste */
+    .hud-controles {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
     }
 
-    .hud-telemetria {
-      font-size: 7px;
+    .badge-angulo {
+      padding: 6px 14px;
+      background: rgba(18, 14, 34, 0.85);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      border-radius: 20px;
+      font-size: 0.78rem;
       font-weight: 700;
       color: #00d2ff;
+      letter-spacing: 1px;
     }
 
-    @keyframes ligarHud {
-      0% { opacity: 0; transform: scale(0.5); }
-      60% { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 1; transform: scale(1); }
+    .btn-auto-rotate {
+      padding: 6px 14px;
+      background: rgba(247, 37, 133, 0.2);
+      border: 1px solid #f72585;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    @keyframes pulsarHud {
-      0% { box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); }
-      100% { box-shadow: 0 0 30px rgba(247, 37, 133, 0.6); }
+    .btn-auto-rotate:hover {
+      background: #f72585;
+      box-shadow: 0 0 15px rgba(247, 37, 133, 0.6);
     }
 
-    /* PAINEL DE TEXTO LATERAL (desliza de trás do capacete) */
+    .dica-drag {
+      position: absolute;
+      top: 15px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* PAINEL DE TEXTO LATERAL */
     .painel-texto {
-      position: relative;
-      margin-left: 40px;
-      max-width: 540px;
+      max-width: 520px;
       z-index: 2;
-      opacity: 0;
-      transform: translateX(-160px) scale(0.92);
-      transition: all 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
-    }
-
-    /* Ativado após a montagem completa da foto real */
-    .painel-texto.revelado {
-      opacity: 1;
-      transform: translateX(0) scale(1);
-      pointer-events: auto;
     }
 
     .tag-edicao {
@@ -359,7 +271,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* BOTÃO COM DEGRADÊ DO TEMA (ROXO / AZUL / ROSA) */
     .btn-explorar {
       display: inline-flex;
       align-items: center;
@@ -391,37 +302,36 @@
     <div class="viewport">
       <div class="stage">
 
-        <!-- CAPACETE COM IMAGEM REAL & ANIMAÇÃO DE MATERIALIZAÇÃO -->
-        <div class="capacete-area">
-          <div class="laser-scanner"></div>
-          <div class="laser-scanner-interno"></div>
+        <!-- SIMULADOR 360° DO CAPACETE -->
+        <div class="viewer-360-container" id="viewerContainer">
+          <span class="dica-drag">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16l-4-4 4-4M17 8l4 4-4 4M3 12h18"/></svg>
+            Arraste para girar em 360°
+          </span>
 
-          <div class="capacete-real-wrapper">
-            <!-- Imagem real de alta definição -->
+          <div class="hologram-base"></div>
+
+          <div class="card-3d-capacete" id="capaceteCard">
+            <!-- Imagem do capacete LS2 Pro Airline Azul/Roxo/Rosa -->
             <img 
-              src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80" 
-              alt="Capacete Real Norisk Razor VR" 
-              class="capacete-real-img"
+              id="fotoCapacete"
+              src="capacete.jpg" 
+              alt="Capacete LS2 Pro Airline 360"
             />
+          </div>
 
-            <!-- Feixe de laser de montagem -->
-            <div class="laser-beam"></div>
-
-            <!-- Visor HUD AR Holográfico com Telemetria -->
-            <div class="hud-ar-visor">
-              <div class="mira-centro"></div>
-              <span class="hud-tag">VR ACTIVE</span>
-              <span class="hud-telemetria">120 FPS // HUD 360°</span>
-            </div>
+          <div class="hud-controles">
+            <span class="badge-angulo" id="badgeAngulo">ÂNGULO: 0°</span>
+            <button class="btn-auto-rotate" id="btnAutoRotate" onclick="alternarAutoRotate()">Giro Automático: ON</button>
           </div>
         </div>
 
-        <!-- PAINEL DE TEXTO LATERAL (desliza de trás do capacete) -->
-        <div class="painel-texto" id="painelTexto">
+        <!-- PAINEL DE TEXTO LATERAL -->
+        <div class="painel-texto">
           <span class="tag-edicao">Edição Camo Cyberpunk</span>
           <h1>Norisk Razor VR Camo</h1>
           <p class="subtitulo">
-            Grafismo camuflado em degradê neon com casco aerodinâmico em resina termoplástica de alta pressão. Integração completa com realidade virtual e HUD holográfico de telemetria em tempo real.
+            Grafismo aerodinâmico em degradê neon com casco de alta pressão. Interaja com a modelagem 360° em tempo real para visualizar cada ângulo da viseira, aerofólio e entradas de ar.
           </p>
 
           <div class="specs-grid">
@@ -450,11 +360,90 @@
   </div>
 
   <script>
-    // Ativa o deslizamento do texto após o capacete real terminar de ser materializado
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('painelTexto').classList.add('revelado');
-      }, 3400);
+    const container = document.getElementById('viewerContainer');
+    const card = document.getElementById('capaceteCard');
+    const badge = document.getElementById('badgeAngulo');
+    const btnAuto = document.getElementById('btnAutoRotate');
+
+    let arrastando = false;
+    let inicioX = 0;
+    let inicioY = 0;
+    let anguloAtualX = 0;
+    let anguloAtualY = 0;
+    let autoRotate = true;
+    let animFrameId = null;
+
+    // Atualiza a transformação 3D e o mostrador do ângulo
+    function atualizarTransform() {
+      // Normaliza para exibição de 0 a 359 graus
+      let anguloNormalizado = Math.round(((anguloAtualY % 360) + 360) % 360);
+      badge.textContent = `ÂNGULO: ${anguloNormalizado}°`;
+
+      card.style.transform = `rotateY(${anguloAtualY}deg) rotateX(${-anguloAtualX}deg)`;
+    }
+
+    // Loop de giro contínuo automático
+    function loopAutoRotate() {
+      if (autoRotate && !arrastando) {
+        anguloAtualY += 0.6;
+        atualizarTransform();
+      }
+      animFrameId = requestAnimationFrame(loopAutoRotate);
+    }
+    loopAutoRotate();
+
+    function alternarAutoRotate() {
+      autoRotate = !autoRotate;
+      btnAuto.textContent = `Giro Automático: ${autoRotate ? 'ON' : 'OFF'}`;
+      btnAuto.style.background = autoRotate ? 'rgba(247, 37, 133, 0.2)' : 'rgba(255, 255, 255, 0.08)';
+    }
+
+    // Eventos de Mouse (Desktop)
+    container.addEventListener('mousedown', (e) => {
+      arrastando = true;
+      inicioX = e.clientX;
+      inicioY = e.clientY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!arrastando) return;
+      const deltaX = e.clientX - inicioX;
+      const deltaY = e.clientY - inicioY;
+
+      anguloAtualY += deltaX * 0.7;
+      anguloAtualX = Math.max(-25, Math.min(25, anguloAtualX + deltaY * 0.2));
+
+      inicioX = e.clientX;
+      inicioY = e.clientY;
+      atualizarTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      arrastando = false;
+    });
+
+    // Eventos de Touch (Celulares e Tablets)
+    container.addEventListener('touchstart', (e) => {
+      arrastando = true;
+      inicioX = e.touches[0].clientX;
+      inicioY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!arrastando) return;
+      const deltaX = e.touches[0].clientX - inicioX;
+      const deltaY = e.touches[0].clientY - inicioY;
+
+      anguloAtualY += deltaX * 0.8;
+      anguloAtualX = Math.max(-25, Math.min(25, anguloAtualX + deltaY * 0.25));
+
+      inicioX = e.touches[0].clientX;
+      inicioY = e.touches[0].clientY;
+      atualizarTransform();
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      arrastando = false;
     });
   </script>
 </body>
