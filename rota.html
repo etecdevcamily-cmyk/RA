@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traçado de Rota // Realidade Aumentada</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan: #00f0ff;
+      --pink: #ff007f;
+      --purple: #8b00ff;
+    }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 50%, #0d091f 0%, #05050c 70%, #000002 100%);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 127, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes rotateBorder { to { --angle: 360deg; } }
+    .card-frame {
+      width: 100%;
+      max-width: 780px;
+      border-radius: 24px;
+      padding: 3px;
+      background: conic-gradient(from var(--angle, 0deg), var(--cyan), var(--purple), var(--pink), var(--cyan));
+      animation: rotateBorder 6s linear infinite;
+      box-shadow: 0 0 45px rgba(139, 0, 255, 0.35);
+      position: relative;
+      z-index: 1;
+    }
+    .inner-content {
+      background: rgba(10, 8, 20, 0.94);
+      border-radius: 22px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      backdrop-filter: blur(14px);
+    }
+    .btn-voltar {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      padding: 8px 18px;
+      border-radius: 30px;
+      color: var(--cyan);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-decoration: none;
+      margin-bottom: 24px;
+      transition: all 0.3s;
+    }
+    .btn-voltar:hover {
+      background: var(--cyan);
+      color: #05050c;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+    .image-box {
+      width: 100%;
+      max-width: 580px;
+      height: 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+      margin-bottom: 28px;
+      background: #090915;
+    }
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.1) brightness(0.9);
+    }
+    .badge-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0, 240, 255, 0.2);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+    }
+    .badge-sub {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      background: rgba(13, 9, 31, 0.85);
+      border: 1px solid var(--pink);
+      color: #ff77b7;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 8px;
+    }
+    .tag-category {
+      font-size: 0.75rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, var(--cyan), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card-frame">
+    <div class="inner-content">
+      <a href="modelos.html" class="btn-voltar">← VOLTAR PARA MODELOS</a>
+      
+      <!-- Imagem inicial executada -->
+      <div class="image-box">
+        <span class="badge-overlay">GPS ROUTE ACTIVE</span>
+        <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80" alt="Traçado de rota" />
+        <span class="badge-sub">Curva à Direita // 250m</span>
+      </div>
+
+      <!-- Texto explicativo centralizado -->
+      <span class="tag-category">Telemetria Preditiva & Curvas</span>
+      <h1>Traçado de Rota em Tempo Real</h1>
+      <p>
+        Esta tecnologia projeta sobre a visão do piloto o arco cinemático ideal para tangência de curvas e frenagem antecipada. A inteligência artificial calcula o ângulo de inclinação seguro da moto com base nas condições do asfalto, velocidade de aproximação e tráfego à frente, eliminando surpresas visuais em pontos cegos.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
