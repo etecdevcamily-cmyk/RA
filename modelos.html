@@ -113,36 +113,133 @@
       background: rgba(0, 210, 255, 0.1);
     }
 
-    /* COLUNAS COM 2 FOTOS DE CADA LADO */
+    /* COLUNAS LATERAIS */
     .coluna-modelos {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      width: 290px;
+      width: 295px;
       z-index: 10;
     }
 
+    .coluna-titulo {
+      font-size: 0.76rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #00d2ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: -8px;
+    }
+
+    .coluna-direita .coluna-titulo {
+      color: #f72585;
+      justify-content: flex-end;
+    }
+
     .card-capacete {
-      background: rgba(18, 14, 34, 0.75);
-      border: 1px solid rgba(123, 44, 191, 0.35);
+      background: rgba(18, 14, 34, 0.8);
+      border: 1px solid rgba(123, 44, 191, 0.4);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55);
       transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
     }
 
     .card-capacete:hover {
       transform: translateY(-6px) scale(1.02);
+      border-color: #00d2ff;
+      box-shadow: 0 14px 35px rgba(0, 210, 255, 0.35);
+    }
+
+    .coluna-direita .card-capacete:hover {
       border-color: #f72585;
       box-shadow: 0 14px 35px rgba(247, 37, 133, 0.4);
     }
 
-    .card-capacete img {
+    .card-media {
+      position: relative;
       width: 100%;
-      height: 135px;
+      height: 140px;
+      overflow: hidden;
+    }
+
+    .card-media img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.4s ease;
+    }
+
+    .card-capacete:hover .card-media img {
+      transform: scale(1.05);
+    }
+
+    /* OVERLAY HOLOGRÁFICO DE GPS SOBRE AS FOTOS */
+    .overlay-hud {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 4, 15, 0.2) 0%, rgba(7, 4, 15, 0.75) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 12px;
+      pointer-events: none;
+    }
+
+    .hud-tag-mini {
+      align-self: flex-start;
+      padding: 3px 8px;
+      background: rgba(0, 210, 255, 0.25);
+      border: 1px solid #00d2ff;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #00d2ff;
+      letter-spacing: 1px;
+    }
+
+    .hud-tag-pink {
+      background: rgba(247, 37, 133, 0.25);
+      border-color: #f72585;
+      color: #f72585;
+      align-self: flex-end;
+    }
+
+    .hud-vector-route {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #00d2ff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-shadow: 0 0 10px #00d2ff;
+    }
+
+    .hud-holo-visor {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75%;
+      height: 60%;
+      border: 1px dashed rgba(0, 210, 255, 0.7);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 210, 255, 0.12);
+      backdrop-filter: blur(1px);
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.35);
+    }
+
+    .hud-holo-visor svg {
+      filter: drop-shadow(0 0 8px #f72585);
     }
 
     .card-info {
@@ -161,7 +258,11 @@
       font-weight: 600;
     }
 
-    /* CÍRCULO CENTRAL ANIMADO NAS CORES DO TEMA */
+    .coluna-direita .card-info p {
+      color: #f72585;
+    }
+
+    /* CÍRCULO CENTRAL ANIMADO */
     .circulo-central-wrapper {
       position: relative;
       width: 380px;
@@ -258,21 +359,43 @@
         ← Voltar ao Holograma 360°
       </a>
 
-      <!-- LADO ESQUERDO: 2 MODELOS -->
+      <!-- LATERAL ESQUERDA: GPS E ROTA -->
       <div class="coluna-modelos">
+        <span class="coluna-titulo">🛰️ Telemetria & Rota GPS</span>
+
+        <!-- Card 1: GPS em Pista / Rota Noturna -->
         <div class="card-capacete">
-          <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80" alt="Capacete Forcite MK1S" />
+          <div class="card-media">
+            <img src="https://images.unsplash.com/photo-1508974239320-0a029497e820?auto=format&fit=crop&w=600&q=80" alt="Traçado de Rota GPS em Rodovia" />
+            <div class="overlay-hud">
+              <span class="hud-tag-mini">GPS ROUTE ACTIVE</span>
+              <div class="hud-vector-route">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span>Curva à Direita // 250m</span>
+              </div>
+            </div>
+          </div>
           <div class="card-info">
-            <h3>Forcite MK1S Smart</h3>
-            <p>Ray-Cast HUD & Câmera 4K</p>
+            <h3>Traçado de Rota em Tempo Real</h3>
+            <p>Projeção vetorial de curvas e velocidade ideal</p>
           </div>
         </div>
 
+        <!-- Card 2: Mapa Satélite / Navegação 3D -->
         <div class="card-capacete">
-          <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80" alt="Capacete Shoei X-SPR Pro" />
+          <div class="card-media">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Navegação Holográfica GPS" />
+            <div class="overlay-hud">
+              <span class="hud-tag-mini">MAP LIDAR // 360°</span>
+              <div class="hud-vector-route">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V8"/></svg>
+                <span>Destino: 4.8 km // Radar OK</span>
+              </div>
+            </div>
+          </div>
           <div class="card-info">
-            <h3>Shoei Optics HUD</h3>
-            <p>Fibra AIM+ com Radar LiDAR</p>
+            <h3>Mapeamento Satélite com Alerta</h3>
+            <p>Identificação de radares e pontos cegos</p>
           </div>
         </div>
       </div>
@@ -290,21 +413,43 @@
         </div>
       </div>
 
-      <!-- LADO DIREITO: 2 MODELOS -->
-      <div class="coluna-modelos">
+      <!-- LATERAL DIREITA: LENTE DE CAPACETE COM GPS EM HOLOGRAMA -->
+      <div class="coluna-modelos coluna-direita">
+        <span class="coluna-titulo">Viseira Holográfica AR ⚡</span>
+
+        <!-- Card 1: Visor Holográfico com Seta GPS AR -->
         <div class="card-capacete">
-          <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=600&q=80" alt="Capacete AGV Pista GP RR" />
+          <div class="card-media">
+            <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80" alt="Viseira do Capacete com GPS Holográfico" />
+            <div class="overlay-hud">
+              <span class="hud-tag-mini hud-tag-pink">HUD VISOR AR</span>
+              <div class="hud-holo-visor">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f72585" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+                <span style="font-size: 0.65rem; color: #00d2ff; font-weight: 800; margin-top: 2px;">88 KM/H • GPS AR</span>
+              </div>
+            </div>
+          </div>
           <div class="card-info">
-            <h3>AGV Carbon VR-Pro</h3>
-            <p>100% Fibra de Carbono 3K</p>
+            <h3>HUD na Viseira: Seta Espacial</h3>
+            <p>Guia holográfico flutuando sobre o asfalto</p>
           </div>
         </div>
 
+        <!-- Card 2: Lente Óptica com Retícula e Telemetria de Trajeto -->
         <div class="card-capacete">
-          <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80" alt="Capacete Jarvish X-AR" />
+          <div class="card-media">
+            <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80" alt="Lente Óptica do Capacete com Telemetria" />
+            <div class="overlay-hud">
+              <span class="hud-tag-mini hud-tag-pink">OPTICAL LENS VR</span>
+              <div class="hud-holo-visor">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+                <span style="font-size: 0.65rem; color: #f72585; font-weight: 800; margin-top: 2px;">WAYPOINT LOCKED</span>
+              </div>
+            </div>
+          </div>
           <div class="card-info">
-            <h3>Jarvish X-AR HUD</h3>
-            <p>Controle por Voz Alexa & Retícula 360°</p>
+            <h3>Lente com Retícula de Telemetria</h3>
+            <p>Camada óptica com dados de navegação direta</p>
           </div>
         </div>
       </div>
