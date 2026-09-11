@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Norisk Razor VR - Holograma 3D 360°</title>
-  <!-- Three.js CDN para renderização do holograma 3D em tempo real -->
+  <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     * {
@@ -98,11 +98,11 @@
       gap: 30px;
     }
 
-    /* CONTAINER DO HOLOGRAMA 3D */
+    /* CONTAINER DO HOLOGRAMA */
     .viewer-holograma-container {
       position: relative;
-      width: 460px;
-      height: 460px;
+      width: 480px;
+      height: 480px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -116,34 +116,16 @@
       cursor: grabbing;
     }
 
-    /* Canvas 3D WebGL */
     #canvasHolograma {
       width: 100%;
       height: 100%;
       display: block;
-      filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.45));
-    }
-
-    /* Scanlines holográficas sobre o capacete */
-    .scanlines {
-      position: absolute;
-      inset: 20px;
-      border-radius: 50%;
-      background: linear-gradient(rgba(0, 210, 255, 0) 50%, rgba(247, 37, 133, 0.15) 50%);
-      background-size: 100% 4px;
-      pointer-events: none;
-      opacity: 0.6;
-      animation: varredura 8s linear infinite;
-    }
-
-    @keyframes varredura {
-      0% { transform: translateY(-10px); }
-      100% { transform: translateY(10px); }
+      filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.4));
     }
 
     .dica-drag {
       position: absolute;
-      top: 10px;
+      top: 6px;
       font-size: 0.8rem;
       color: #00d2ff;
       letter-spacing: 1.5px;
@@ -156,10 +138,10 @@
       text-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
     }
 
-    /* HUD de Controles do Holograma */
+    /* HUD de Controles */
     .hud-controles {
       position: absolute;
-      bottom: 6px;
+      bottom: 2px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -294,14 +276,13 @@
     <div class="viewport">
       <div class="stage">
 
-        <!-- HOLOGRAMA 360° WEBGL INTERATIVO -->
+        <!-- HOLOGRAMA 3D ESPECÍFICO DE CAPACETE -->
         <div class="viewer-holograma-container" id="hologramContainer">
           <span class="dica-drag">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16l-4-4 4-4M17 8l4 4-4 4M3 12h18"/></svg>
-            AR Hologram // 360° Drag
+            Holograma 3D // Arraste em 360°
           </span>
 
-          <div class="scanlines"></div>
           <canvas id="canvasHolograma"></canvas>
 
           <div class="hud-controles">
@@ -315,7 +296,7 @@
           <span class="tag-edicao">Holograma AR Interativo</span>
           <h1>Norisk Razor VR Camo</h1>
           <p class="subtitulo">
-            Projeção volumétrica com geometria aerodinâmica, visor óptico com retícula HUD de alta precisão e telemetria LiDAR. Arraste livremente para inspecionar cada ângulo em 360 graus.
+            Projeção volumétrica realista de capacete esportivo Full-Face com visor curvo articulado, queixeira aerodinâmica e difusores de ar. Gire em 360° para inspecionar todos os ângulos.
           </p>
 
           <div class="specs-grid">
@@ -344,7 +325,6 @@
   </div>
 
   <script>
-    // Configuração do Three.js para o Holograma 3D do Capacete
     const container = document.getElementById('hologramContainer');
     const canvas = document.getElementById('canvasHolograma');
     const badgeAngulo = document.getElementById('badgeAngulo');
@@ -352,104 +332,154 @@
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(0, 0, 8.5);
+    camera.position.set(0, 0.4, 7.8);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(440, 440);
+    renderer.setSize(480, 480);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Grupo principal para rotação 360°
-    const helmetGroup = new THREE.Group();
-    scene.add(helmetGroup);
+    // Grupo de Rotação 360°
+    const helmet = new THREE.Group();
+    scene.add(helmet);
 
-    // 1. Casco do Capacete em Wireframe Neon (Rosa choque + Roxo)
-    const helmetGeometry = new THREE.SphereGeometry(2.3, 28, 22, 0, Math.PI * 2, 0, Math.PI * 0.82);
-    // Moldar formato aerodinâmico esportivo de capacete
-    const pos = helmetGeometry.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      let x = pos.getX(i);
-      let y = pos.getY(i);
-      let z = pos.getZ(i);
+    // MATERIAIS HOLOGRÁFICOS NEON
+    const matRosaWire = new THREE.MeshBasicMaterial({ color: 0xf72585, wireframe: true, transparent: true, opacity: 0.85 });
+    const matRosaGlow = new THREE.MeshBasicMaterial({ color: 0xf72585, transparent: true, opacity: 0.12, side: THREE.DoubleSide });
+    
+    const matAzulVisor = new THREE.MeshBasicMaterial({ color: 0x00d2ff, wireframe: true, transparent: true, opacity: 0.95 });
+    const matAzulGlass = new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
 
-      // Alongar para trás (aerodinâmica) e estreitar na queixeira
-      if (z < 0) z *= 1.35;
-      if (y < -0.4) {
-        x *= 0.85;
-        z *= 1.05;
-      }
-      pos.setXYZ(i, x, y, z);
+    const matRoxoAero = new THREE.MeshBasicMaterial({ color: 0x7b2cbf, wireframe: true, transparent: true, opacity: 0.75 });
+    const matCianoPoints = new THREE.PointsMaterial({ color: 0x00d2ff, size: 0.045, transparent: true, opacity: 0.9 });
+
+    // 1. CASCO DO CRÂNIO (DOME / SHELL SUPERIOR)
+    const domeGeo = new THREE.SphereGeometry(1.85, 32, 20, 0, Math.PI * 2, 0, Math.PI * 0.58);
+    // Ajustar formato do capacete (mais longo para trás)
+    const domePos = domeGeo.attributes.position;
+    for (let i = 0; i < domePos.count; i++) {
+      let x = domePos.getX(i);
+      let y = domePos.getY(i);
+      let z = domePos.getZ(i);
+      if (z < 0) z *= 1.25; // alongamento traseiro
+      domePos.setXYZ(i, x, y, z);
     }
-    helmetGeometry.computeVertexNormals();
+    domeGeo.computeVertexNormals();
 
-    const helmetMaterial = new THREE.MeshBasicMaterial({
-      color: 0xf72585,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.65
-    });
-    const helmetMesh = new THREE.Mesh(helmetGeometry, helmetMaterial);
-    helmetGroup.add(helmetMesh);
+    const domeWire = new THREE.Mesh(domeGeo, matRosaWire);
+    const domeGlow = new THREE.Mesh(domeGeo, matRosaGlow);
+    domeWire.position.y = 0.3;
+    domeGlow.position.y = 0.3;
+    helmet.add(domeWire);
+    helmet.add(domeGlow);
 
-    // Núcleo com brilho interno violeta
-    const coreMaterial = new THREE.MeshBasicMaterial({
-      color: 0x7b2cbf,
-      wireframe: false,
-      transparent: true,
-      opacity: 0.18
-    });
-    const coreMesh = new THREE.Mesh(helmetGeometry, coreMaterial);
-    helmetGroup.add(coreMesh);
-
-    // 2. Visor Holográfico Dianteiro (Azul Ciano)
-    const visorGeometry = new THREE.CylinderGeometry(1.65, 1.7, 1.1, 24, 6, true, Math.PI * 0.15, Math.PI * 0.7);
-    const visorMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00d2ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.9
-    });
-    const visorMesh = new THREE.Mesh(visorGeometry, visorMaterial);
-    visorMesh.position.set(0, -0.1, 1.25);
-    helmetGroup.add(visorMesh);
-
-    // 3. Aerofólio Traseiro
-    const spoilerGeo = new THREE.ConeGeometry(1.6, 1.2, 5, 2, true);
-    const spoilerMat = new THREE.MeshBasicMaterial({ color: 0x7b2cbf, wireframe: true, transparent: true, opacity: 0.75 });
-    const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
-    spoiler.rotation.x = -Math.PI / 2.2;
-    spoiler.position.set(0, 0.4, -2.1);
-    helmetGroup.add(spoiler);
-
-    // 4. Anéis Holográficos de Varredura LiDAR
-    const ringGeo = new THREE.RingGeometry(2.7, 2.76, 48);
-    const ringMat = new THREE.MeshBasicMaterial({ color: 0x00d2ff, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = -1.6;
-    helmetGroup.add(ring);
-
-    // 5. Partículas flutuantes ao redor do capacete
-    const particleCount = 180;
-    const particleGeo = new THREE.BufferGeometry();
-    const particleCoords = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      particleCoords[i] = (Math.random() - 0.5) * 6;
-      particleCoords[i + 1] = (Math.random() - 0.5) * 6;
-      particleCoords[i + 2] = (Math.random() - 0.5) * 6;
+    // 2. QUEIXEIRA FRONTAL (CHIN BAR)
+    const chinGeo = new THREE.CylinderGeometry(1.6, 1.45, 0.9, 28, 4, true, -Math.PI * 0.38, Math.PI * 0.76);
+    const chinPos = chinGeo.attributes.position;
+    for (let i = 0; i < chinPos.count; i++) {
+      let x = chinPos.getX(i);
+      let y = chinPos.getY(i);
+      let z = chinPos.getZ(i);
+      z += 0.35; // projeção da queixeira para frente
+      chinPos.setXYZ(i, x, y, z);
     }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particleCoords, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0x00d2ff, size: 0.05, transparent: true, opacity: 0.8 });
-    const particles = new THREE.Points(particleGeo, particleMat);
-    helmetGroup.add(particles);
+    chinGeo.computeVertexNormals();
 
-    // CONTROLE DE ROTAÇÃO INTERATIVA 360°
+    const chinMesh = new THREE.Mesh(chinGeo, matRosaWire);
+    const chinGlow = new THREE.Mesh(chinGeo, matRosaGlow);
+    chinMesh.position.set(0, -0.65, 0.15);
+    chinGlow.position.set(0, -0.65, 0.15);
+    helmet.add(chinMesh);
+    helmet.add(chinGlow);
+
+    // 3. GRADE DE ENTRADA DE AR NA QUEIXEIRA
+    const ventGeo = new THREE.BoxGeometry(0.5, 0.22, 0.2);
+    const ventMesh = new THREE.Mesh(ventGeo, matRoxoAero);
+    ventMesh.position.set(0, -0.65, 1.95);
+    helmet.add(ventMesh);
+
+    // 4. VISEIRA CURVA PANORÂMICA (VISOR)
+    const visorGeo = new THREE.CylinderGeometry(1.72, 1.7, 0.85, 24, 6, true, -Math.PI * 0.35, Math.PI * 0.7);
+    const visorPos = visorGeo.attributes.position;
+    for (let i = 0; i < visorPos.count; i++) {
+      let x = visorPos.getX(i);
+      let y = visorPos.getY(i);
+      let z = visorPos.getZ(i);
+      z += 0.18;
+      visorPos.setXYZ(i, x, y, z);
+    }
+    visorGeo.computeVertexNormals();
+
+    const visorMesh = new THREE.Mesh(visorGeo, matAzulVisor);
+    const visorGlass = new THREE.Mesh(visorGeo, matAzulGlass);
+    visorMesh.position.set(0, -0.15, 0.25);
+    visorGlass.position.set(0, -0.15, 0.25);
+    helmet.add(visorMesh);
+    helmet.add(visorGlass);
+
+    // 5. PIVÔS LATERAIS DE ARTICULAÇÃO DA VISEIRA
+    const pivotGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.1, 16);
+    pivotGeo.rotateZ(Math.PI / 2);
+    const pivotEsq = new THREE.Mesh(pivotGeo, matAzulVisor);
+    pivotEsq.position.set(-1.75, -0.15, 0.35);
+    const pivotDir = new THREE.Mesh(pivotGeo, matAzulVisor);
+    pivotDir.position.set(1.75, -0.15, 0.35);
+    helmet.add(pivotEsq);
+    helmet.add(pivotDir);
+
+    // 6. AEROFÓLIO / SPOILER TRASEIRO ESPORTIVO
+    const spoilerShape = new THREE.BoxGeometry(1.9, 0.18, 0.7);
+    const spoilerMesh = new THREE.Mesh(spoilerShape, matRoxoAero);
+    spoilerMesh.position.set(0, 0.5, -1.9);
+    spoilerMesh.rotation.x = -0.3;
+    helmet.add(spoilerMesh);
+
+    // 7. ENTRADAS DE AR SUPERIORES
+    const topVentEsq = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.5, 4), matAzulVisor);
+    topVentEsq.rotation.x = Math.PI / 2.3;
+    topVentEsq.position.set(-0.55, 1.95, -0.1);
+    const topVentDir = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.5, 4), matAzulVisor);
+    topVentDir.rotation.x = Math.PI / 2.3;
+    topVentDir.position.set(0.55, 1.95, -0.1);
+    helmet.add(topVentEsq);
+    helmet.add(topVentDir);
+
+    // 8. BORDA INFERIOR DO PESCOÇO (NECK RING)
+    const neckRingGeo = new THREE.TorusGeometry(1.6, 0.08, 8, 36);
+    neckRingGeo.rotateX(Math.PI / 2);
+    const neckRing = new THREE.Mesh(neckRingGeo, matRosaWire);
+    neckRing.position.set(0, -1.15, -0.1);
+    helmet.add(neckRing);
+
+    // 9. NUVEM DE PONTOS DE ESCANEAMENTO HOLOGRÁFICO
+    const pointsGeo = new THREE.BufferGeometry();
+    const count = 160;
+    const coords = new Float32Array(count * 3);
+    for (let i = 0; i < count * 3; i += 3) {
+      coords[i] = (Math.random() - 0.5) * 4.8;
+      coords[i + 1] = (Math.random() - 0.5) * 4.2;
+      coords[i + 2] = (Math.random() - 0.5) * 4.8;
+    }
+    pointsGeo.setAttribute('position', new THREE.BufferAttribute(coords, 3));
+    const pointCloud = new THREE.Points(pointsGeo, matCianoPoints);
+    helmet.add(pointCloud);
+
+    // 10. ANEL HOLOGRÁFICO DE BASE LIDAR
+    const lidarRing = new THREE.Mesh(
+      new THREE.RingGeometry(2.5, 2.56, 48),
+      new THREE.MeshBasicMaterial({ color: 0x00d2ff, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+    );
+    lidarRing.rotation.x = Math.PI / 2;
+    lidarRing.position.y = -1.6;
+    helmet.add(lidarRing);
+
+    // CONTROLE DE ROTAÇÃO 360° LIVRE
     let arrastando = false;
     let anteriorX = 0;
     let anteriorY = 0;
     let autoGirar = true;
 
     function atualizarBadge() {
-      let graus = Math.round(((helmetGroup.rotation.y * (180 / Math.PI)) % 360 + 360) % 360);
+      let graus = Math.round(((helmet.rotation.y * (180 / Math.PI)) % 360 + 360) % 360);
       badgeAngulo.textContent = `ÂNGULO: ${graus}°`;
     }
 
@@ -471,8 +501,8 @@
       const deltaX = e.clientX - anteriorX;
       const deltaY = e.clientY - anteriorY;
 
-      helmetGroup.rotation.y += deltaX * 0.015;
-      helmetGroup.rotation.x = Math.max(-0.4, Math.min(0.4, helmetGroup.rotation.x + deltaY * 0.008));
+      helmet.rotation.y += deltaX * 0.015;
+      helmet.rotation.x = Math.max(-0.4, Math.min(0.4, helmet.rotation.x + deltaY * 0.008));
 
       anteriorX = e.clientX;
       anteriorY = e.clientY;
@@ -481,7 +511,7 @@
 
     window.addEventListener('mouseup', () => { arrastando = false; });
 
-    // Touch (Mobile / Tablet)
+    // Touch
     container.addEventListener('touchstart', (e) => {
       arrastando = true;
       anteriorX = e.touches[0].clientX;
@@ -493,8 +523,8 @@
       const deltaX = e.touches[0].clientX - anteriorX;
       const deltaY = e.touches[0].clientY - anteriorY;
 
-      helmetGroup.rotation.y += deltaX * 0.016;
-      helmetGroup.rotation.x = Math.max(-0.4, Math.min(0.4, helmetGroup.rotation.x + deltaY * 0.008));
+      helmet.rotation.y += deltaX * 0.016;
+      helmet.rotation.x = Math.max(-0.4, Math.min(0.4, helmet.rotation.x + deltaY * 0.008));
 
       anteriorX = e.touches[0].clientX;
       anteriorY = e.touches[0].clientY;
@@ -503,18 +533,17 @@
 
     window.addEventListener('touchend', () => { arrastando = false; });
 
-    // Loop de Animação
+    // Loop de renderização
     function animar() {
       requestAnimationFrame(animar);
 
       if (autoGirar && !arrastando) {
-        helmetGroup.rotation.y += 0.01;
+        helmet.rotation.y += 0.01;
         atualizarBadge();
       }
 
-      // Leve flutuação e oscilação dos anéis
-      ring.rotation.z += 0.008;
-      particles.rotation.y += 0.002;
+      lidarRing.rotation.z += 0.008;
+      pointCloud.rotation.y += 0.003;
 
       renderer.render(scene, camera);
     }
