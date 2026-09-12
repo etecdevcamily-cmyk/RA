@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lente com Retícula // Telemetria Óptica</title>
+  <title>Lente com Retícula de Telemetria // AR GPS</title>
 
   <!-- FAVICON DE CAPACETE PERSONALIZADO -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%2300f0ff'/><stop offset='50%25' stop-color='%238b00ff'/><stop offset='100%25' stop-color='%23ff007f'/></linearGradient></defs><circle cx='50' cy='50' r='48' fill='%2305050c' stroke='url(%23grad)' stroke-width='4'/><path d='M25 50 C25 28 36 20 54 20 C72 20 80 32 80 50 C80 62 76 74 65 74 C58 74 54 70 48 70 C42 70 38 74 34 74 C26 74 25 64 25 50 Z' fill='none' stroke='url(%23grad)' stroke-width='4'/><path d='M42 42 C48 38 68 38 76 46 L70 56 C64 50 48 50 42 54 Z' fill='%2300f0ff' opacity='0.85'/></svg>" />
@@ -38,14 +38,15 @@
     }
     @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
     @keyframes rotateBorder { to { --angle: 360deg; } }
+
     .card-frame {
       width: 100%;
-      max-width: 800px;
+      max-width: 820px;
       border-radius: 24px;
       padding: 3px;
-      background: conic-gradient(from var(--angle, 0deg), var(--cyan), var(--pink), var(--purple), var(--cyan));
+      background: conic-gradient(from var(--angle, 0deg), var(--pink), var(--cyan), var(--purple), var(--pink));
       animation: rotateBorder 6s linear infinite;
-      box-shadow: 0 0 45px rgba(139, 0, 255, 0.35);
+      box-shadow: 0 0 45px rgba(255, 0, 127, 0.35);
       position: relative;
       z-index: 1;
     }
@@ -81,68 +82,263 @@
       color: #05050c;
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
     }
+
+    /* Container da Imagem com Visualizador Interativo */
     .image-box {
       width: 100%;
-      max-width: 620px;
-      height: 300px;
+      max-width: 680px;
+      height: 380px;
       border-radius: 16px;
       overflow: hidden;
       position: relative;
-      border: 1px solid rgba(139, 0, 255, 0.45);
-      box-shadow: 0 0 30px rgba(139, 0, 255, 0.25);
-      margin-bottom: 28px;
+      border: 1px solid rgba(255, 0, 127, 0.45);
+      box-shadow: 0 0 35px rgba(255, 0, 127, 0.25);
+      margin-bottom: 24px;
       background: #000;
     }
     .image-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: contrast(1.15) brightness(0.95);
+      transition: filter 0.5s ease, transform 0.5s ease;
     }
-    .badge-overlay {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(0, 240, 255, 0.25);
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 5px 12px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-      backdrop-filter: blur(6px);
+
+    /* Quando AR está ativa: a foto ganha tom escuro e azulado de viseira AR */
+    .image-box.ar-active img {
+      filter: brightness(0.4) contrast(1.3) hue-rotate(190deg);
+      transform: scale(1.04);
     }
-    .reticle-hud {
+
+    /* RETÍCULA INICIAL CLICÁVEL */
+    .reticle-trigger {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 140px;
-      height: 140px;
-      border: 2px dashed var(--pink);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+      transition: all 0.4s ease;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+    .reticle-circle {
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
+      border: 2px dashed var(--pink);
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.6), inset 0 0 15px rgba(255, 0, 127, 0.3);
+      animation: spinReticle 10s linear infinite, pulseGlow 1.8s ease-in-out infinite alternate;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
-      pointer-events: none;
-      animation: pulseCrosshair 3s infinite ease-in-out;
+      transition: transform 0.3s;
     }
-    @keyframes pulseCrosshair {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.06); }
+    .reticle-trigger:hover .reticle-circle {
+      transform: scale(1.12);
+      border-color: var(--cyan);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.8), inset 0 0 20px rgba(0, 240, 255, 0.4);
     }
-    .reticle-center {
-      background: rgba(5, 5, 12, 0.85);
+    .reticle-inner-cross {
+      width: 14px;
+      height: 14px;
+      position: relative;
+    }
+    .reticle-inner-cross::before, .reticle-inner-cross::after {
+      content: '';
+      position: absolute;
+      background: var(--cyan);
+    }
+    .reticle-inner-cross::before { top: 6px; left: 0; width: 14px; height: 2px; }
+    .reticle-inner-cross::after { left: 6px; top: 0; width: 2px; height: 14px; }
+
+    @keyframes spinReticle {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulseGlow {
+      from { opacity: 0.7; }
+      to { opacity: 1; filter: drop-shadow(0 0 8px var(--pink)); }
+    }
+
+    .reticle-tag {
+      background: rgba(5, 5, 15, 0.88);
       border: 1px solid var(--cyan);
       color: var(--cyan);
-      font-weight: 800;
       font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      padding: 4px 10px;
-      border-radius: 6px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: bouncePrompt 2s infinite ease-in-out;
     }
+    @keyframes bouncePrompt {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Esconder o botão inicial quando o HUD AR estiver expandido */
+    .image-box.ar-active .reticle-trigger {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(1.8);
+    }
+
+    /* CAMADA DE REALIDADE AUMENTADA (GPS EXPANDIDO) */
+    .ar-hud-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+    }
+    .image-box.ar-active .ar-hud-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Grade 3D no chão (LiDAR scan de pista) */
+    .ar-grid-floor {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: 
+        linear-gradient(to top, rgba(0, 240, 255, 0.35) 0%, transparent 80%),
+        repeating-linear-gradient(0deg, transparent 0px, transparent 18px, rgba(0, 240, 255, 0.25) 20px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 28px, rgba(255, 0, 127, 0.2) 30px);
+      transform: perspective(300px) rotateX(60deg);
+      transform-origin: bottom center;
+      mask-image: linear-gradient(to top, black 20%, transparent 95%);
+    }
+
+    /* Seta holográfica espacial 3D de GPS */
+    .spatial-arrow-ar {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .svg-arrow-3d {
+      width: 76px;
+      height: 76px;
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 20px var(--cyan)) drop-shadow(0 0 35px var(--pink));
+      animation: floatArrowAR 1.4s infinite ease-in-out;
+    }
+    @keyframes floatArrowAR {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.15); stroke: var(--pink); }
+    }
+
+    .route-label-ar {
+      background: rgba(5, 5, 12, 0.9);
+      border: 1px solid var(--cyan);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 16px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      letter-spacing: 2px;
+    }
+
+    /* Painéis de telemetria no HUD */
+    .ar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 6;
+    }
+    .ar-tag-active {
+      background: rgba(255, 0, 127, 0.35);
+      border: 1px solid var(--pink);
+      color: #ffb8da;
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 1.5px;
+      backdrop-filter: blur(6px);
+    }
+    .btn-fechar-ar {
+      background: rgba(0, 240, 255, 0.2);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-fechar-ar:hover {
+      background: var(--cyan);
+      color: #05050c;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    }
+
+    .ar-footer-telemetry {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 6;
+    }
+    .hud-stat-box {
+      background: rgba(13, 9, 31, 0.9);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      padding: 8px 14px;
+      border-radius: 10px;
+      text-align: left;
+    }
+    .hud-stat-box small {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .hud-stat-box span {
+      color: var(--cyan);
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    /* Linhas de horizonte e mira holográfica */
+    .ar-crosshair-lines {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.5) 30%, transparent 50%, rgba(0, 240, 255, 0.5) 70%, transparent 100%);
+    }
+
+    /* Textos da página */
     .tag-category {
       font-size: 0.75rem;
       color: var(--pink);
@@ -154,7 +350,7 @@
     h1 {
       font-size: 2.1rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #ffffff, var(--pink), var(--cyan));
+      background: linear-gradient(135deg, #ffffff, var(--cyan), var(--pink));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 16px;
@@ -163,7 +359,17 @@
       color: #cbd5e1;
       font-size: 1.05rem;
       line-height: 1.7;
-      max-width: 640px;
+      max-width: 660px;
+      margin-bottom: 16px;
+    }
+    .dica-clique {
+      font-size: 0.85rem;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 20px;
+      letter-spacing: 1px;
     }
   </style>
 </head>
@@ -172,20 +378,80 @@
     <div class="inner-content">
       <a href="modelos.html" class="btn-voltar">← VOLTAR PARA MODELOS</a>
       
-      <div class="image-box">
-        <span class="badge-overlay">OPTICAL LENS VR // MICRO-LED</span>
-        <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1200&q=80" alt="Lente e Viseira de Capacete de Moto" />
-        <div class="reticle-hud">
-          <span class="reticle-center">⊕ RETÍCULA ATIVA</span>
+      <!-- Box Interativo: clique na retícula para ativar a AR -->
+      <div class="image-box" id="imageBox">
+        
+        <!-- Foto da moto -->
+        <img 
+          src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1200&q=80" 
+          alt="Moto com Retícula e HUD AR" 
+        />
+
+        <!-- BOTÃO DA RETÍCULA (CLIQUE PARA EXPANDIR AR) -->
+        <button class="reticle-trigger" id="btnAtivarAR" onclick="toggleAR()" title="Clique para expandir a Realidade Aumentada">
+          <div class="reticle-circle">
+            <div class="reticle-inner-cross"></div>
+          </div>
+          <div class="reticle-tag">
+            <span>⊕ RETÍCULA ATIVA</span> • <span style="color:#ff007f">CLIQUE PARA EXPANDIR AR</span>
+          </div>
+        </button>
+
+        <!-- CAMADA EXPANDIDA DE REALIDADE AUMENTADA (HUD GPS) -->
+        <div class="ar-hud-overlay">
+          <div class="ar-header">
+            <span class="ar-tag-active">● MODO AR GPS // CONECTADO</span>
+            <button class="btn-fechar-ar" onclick="toggleAR()">✕ FECHAR AR</button>
+          </div>
+
+          <!-- Linha de horizonte da viseira -->
+          <div class="ar-crosshair-lines"></div>
+
+          <!-- Grade LiDAR no chão -->
+          <div class="ar-grid-floor"></div>
+
+          <!-- Seta Holográfica 3D no centro -->
+          <div class="spatial-arrow-ar">
+            <svg class="svg-arrow-3d" viewBox="0 0 24 24">
+              <line x1="12" y1="19" x2="12" y2="5"></line>
+              <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+            <div class="route-label-ar">EM 150M • CURVA À DIREITA</div>
+          </div>
+
+          <!-- Rodapé com dados de telemetria -->
+          <div class="ar-footer-telemetry">
+            <div class="hud-stat-box">
+              <small>VELOCIDADE</small>
+              <span>114 KM/H</span>
+            </div>
+            <div class="hud-stat-box" style="text-align: right;">
+              <small>RADAR DE PISTA</small>
+              <span style="color: var(--pink)">DISTÂNCIA: 42M</span>
+            </div>
+          </div>
         </div>
+
       </div>
 
-      <span class="tag-category">Micro-Projetores MicroLED</span>
+      <span class="tag-category">Micro-Projetores MicroLED & Eletrocrômicos</span>
       <h1>Lente com Retícula de Telemetria</h1>
       <p>
-        Camada eletrocrômica de alta densidade incorporada ao policarbonato da viseira. A lente funciona como um prisma transparente onde microprojetores ópticos desenham a retícula com foco no infinito, permitindo que o motociclista leia informações de velocidade, distância do veículo à frente e miras de navegação sem perder o foco na pista.
+        Camada eletrocrômica de alta densidade incorporada ao policarbonato da viseira. A lente funciona como um prisma óptico onde microprojetores desenham a retícula com foco no infinito, permitindo que o motociclista leia informações de rota, velocidade e vetores de condução sem desviar os olhos do tráfego.
       </p>
+
+      <div class="dica-clique">
+        💡 <strong>Interação:</strong> Toque ou clique no círculo da retícula na foto acima para expandir a Realidade Aumentada com GPS e telemetria!
+      </div>
     </div>
   </div>
+
+  <script>
+    const imageBox = document.getElementById('imageBox');
+
+    function toggleAR() {
+      imageBox.classList.toggle('ar-active');
+    }
+  </script>
 </body>
 </html>
