@@ -84,7 +84,7 @@
     .image-box {
       width: 100%;
       max-width: 620px;
-      height: 300px;
+      height: 320px;
       border-radius: 16px;
       overflow: hidden;
       position: relative;
@@ -97,7 +97,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: contrast(1.1) brightness(0.85);
+      filter: contrast(1.15) brightness(0.88);
     }
     .badge-overlay {
       position: absolute;
@@ -111,10 +111,23 @@
       padding: 5px 12px;
       border-radius: 6px;
       letter-spacing: 1px;
+      backdrop-filter: blur(6px);
+      z-index: 3;
     }
+    /* Arco HUD simulando a curvatura da viseira */
+    .visor-hud-overlay {
+      position: absolute;
+      inset: 8px;
+      border: 1px dashed rgba(0, 240, 255, 0.3);
+      border-radius: 12px;
+      pointer-events: none;
+      box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.15);
+      z-index: 2;
+    }
+    /* Seta espacial flutuante sobre a pista */
     .spatial-arrow-box {
       position: absolute;
-      top: 48%;
+      top: 42%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
@@ -122,32 +135,47 @@
       align-items: center;
       gap: 6px;
       pointer-events: none;
+      z-index: 3;
     }
     .spatial-arrow {
-      width: 60px;
-      height: 60px;
+      width: 64px;
+      height: 64px;
       fill: none;
       stroke: var(--cyan);
-      stroke-width: 4;
+      stroke-width: 4.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 0 14px var(--cyan));
+      filter: drop-shadow(0 0 16px var(--cyan)) drop-shadow(0 0 30px var(--pink));
       animation: floatArrow 1.5s infinite ease-in-out;
     }
     @keyframes floatArrow {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-8px) scale(1.08); }
+      50% { transform: translateY(-8px) scale(1.1); }
     }
     .speed-tag {
-      background: rgba(5, 5, 12, 0.85);
+      background: rgba(5, 5, 12, 0.9);
       border: 1px solid var(--cyan);
-      padding: 5px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
       color: var(--cyan);
-      font-weight: 800;
+      font-weight: 900;
       font-size: 0.82rem;
       letter-spacing: 2px;
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+    .cockpit-gauge {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      background: rgba(13, 9, 31, 0.88);
+      border: 1px solid var(--pink);
+      color: #ff77b7;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 1.5px;
+      z-index: 3;
     }
     .tag-category {
       font-size: 0.75rem;
@@ -178,22 +206,33 @@
     <div class="inner-content">
       <a href="modelos.html" class="btn-voltar">← VOLTAR PARA MODELOS</a>
       
+      <!-- Visualizador do Piloto com Cockpit da Moto e Seta HUD -->
       <div class="image-box">
-        <span class="badge-overlay">HEAD-UP DISPLAY // AR SPATIAL</span>
-        <img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1200&q=80" alt="Asfalto visto pelo piloto" />
+        <span class="badge-overlay">MOTO POV // VISEIRA HUD</span>
+        <div class="visor-hud-overlay"></div>
+
+        <!-- Foto de piloto no guidão/cockpit da moto olhando a estrada -->
+        <img 
+          src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1200&q=80" 
+          alt="Visão da moto pelo piloto e estrada à frente" 
+        />
+
+        <!-- Seta Espacial 3D flutuando no asfalto com velocidade -->
         <div class="spatial-arrow-box">
           <svg class="spatial-arrow" viewBox="0 0 24 24">
             <line x1="12" y1="19" x2="12" y2="5"></line>
             <polyline points="5 12 12 5 19 12"></polyline>
           </svg>
-          <span class="speed-tag">↗ 88 KM/H • AR LOCK</span>
+          <span class="speed-tag">↗ 88 KM/H • SPATIAL HUD</span>
         </div>
+
+        <span class="cockpit-gauge">TELEMETRIA INTEGRADA // MOTO AR</span>
       </div>
 
       <span class="tag-category">Projeção Óptica Direta</span>
       <h1>HUD na Viseira: Seta Espacial</h1>
       <p>
-        A seta tridimensional holográfica parece estar flutuando fisicamente sobre a superfície do asfalto, ajustando sua perspectiva dinamicamente conforme a inclinação da cabeça do motociclista. O piloto não precisa desviar o olhar do trânsito para painéis de instrumentos físicos.
+        A seta tridimensional holográfica parece estar flutuando fisicamente sobre a superfície do asfalto à frente da moto, ajustando sua perspectiva dinamicamente conforme a inclinação da cabeça do motociclista e as curvas da pista. O piloto mantém o foco total na condução sem desviar os olhos para painéis analógicos.
       </p>
     </div>
   </div>
